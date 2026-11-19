@@ -70,7 +70,7 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
     return (
       <div className="grid md:grid-cols-2 gap-6 items-start rise">
         <div className="card p-7">
-          <p className="chip bg-[#eafaf4] text-[#0b7a5c]">● Live now</p>
+          <p className="chip bg-[#2fd39f]/10 text-[#4fe3b2]">● Live now</p>
           <h2 className="font-display text-5xl mt-3">Your request is live.</h2>
           <p className="text-muted mt-2">{made.units} unit{made.units > 1 ? "s" : ""} of <b className="text-ink">{made.bloodGroup}</b> at {made.hospital}. Compatible donors nearby are being alerted in their language.</p>
           <p className="text-sm mt-4">Share the <b>verified poster</b> instead of typing a forward. Its QR code always shows the live status — and it switches to <b>FULFILLED</b> the moment you close it, so it can never go stale.</p>
@@ -89,12 +89,12 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
     <div className="card p-7 md:p-10">
       <div className="flex flex-wrap gap-2">
         {LANGS.map(([code, label]) => (
-          <button key={code} onClick={() => setLang(code)} className={`chip !px-4 !py-2 text-sm border ${lang === code ? "bg-ink text-white border-ink" : "bg-white border-line"}`}>{label}</button>
+          <button key={code} onClick={() => setLang(code)} className={`chip !px-4 !py-2 text-sm border ${lang === code ? "bg-white text-black border-white" : "bg-[#141414] border-line"}`}>{label}</button>
         ))}
       </div>
 
       <div className="mt-10 flex flex-col items-center text-center">
-        <button onClick={toggle} disabled={!supported} className={`relative h-36 w-36 rounded-full flex items-center justify-center text-5xl text-white transition ${listening ? "bg-rakt scale-105" : "bg-ink hover:bg-rakt"}`} aria-label={listening ? "Stop recording" : "Start recording"}>
+        <button onClick={toggle} disabled={!supported} className={`relative h-36 w-36 rounded-full flex items-center justify-center text-5xl text-white transition ${listening ? "bg-rakt scale-105" : "bg-[#1c1c1c] hover:bg-rakt"}`} aria-label={listening ? "Stop recording" : "Start recording"}>
           {listening && <span className="ripple absolute inset-0 rounded-full" />}
           <span className="relative">{listening ? "■" : "🎙️"}</span>
         </button>

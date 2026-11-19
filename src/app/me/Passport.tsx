@@ -12,7 +12,7 @@ export default function Passport() {
       <div>
         <h2 className="font-display text-3xl">🧾 Upload your last donation certificate</h2>
         <p className="text-sm text-muted mt-1">A photo of the certificate or the blood bank SMS. We read the date, so we only ask you when it is safe for you to donate again (90 days). It also raises your trust score.</p>
-        {msg && <p className={`text-sm mt-2 ${msg.ok ? "text-[#0b7a5c]" : "text-rakt"}`}>{msg.t}</p>}
+        {msg && <p className={`text-sm mt-2 ${msg.ok ? "text-[#4fe3b2]" : "text-rakt"}`}>{msg.t}</p>}
       </div>
       <div className="flex flex-col gap-2">
         <label className="btn btn-ghost text-sm cursor-pointer">📎 {file ? file.name : "Choose photo"}<input type="file" accept="image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} /></label>

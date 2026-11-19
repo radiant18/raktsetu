@@ -25,7 +25,7 @@ export default function BloodMatch() {
         </div>
         <div className="flex rounded-full bg-mist p-1 text-sm">
           {(["give", "get"] as const).map((m) => (
-            <button key={m} onClick={() => setMode(m)} className={`px-4 py-2 rounded-full font-semibold transition ${mode === m ? "bg-ink text-white" : "text-muted"}`}>{m === "give" ? "I can give to" : "I can get from"}</button>
+            <button key={m} onClick={() => setMode(m)} className={`px-4 py-2 rounded-full font-semibold transition ${mode === m ? "bg-white text-black" : "text-muted"}`}>{m === "give" ? "I can give to" : "I can get from"}</button>
           ))}
         </div>
       </div>
@@ -34,7 +34,7 @@ export default function BloodMatch() {
           const on = set.includes(g), mine = g === me;
           return (
             <button key={`${g}-${me}-${mode}`} onClick={() => setMe(g)} aria-pressed={mine}
-              className={`flip aspect-square rounded-2xl font-display text-xl md:text-3xl border ${mine ? "bg-ink text-white border-ink" : on ? "bg-rakt text-white border-rakt" : "bg-white text-muted border-line opacity-50"}`}
+              className={`flip aspect-square rounded-2xl font-display text-xl md:text-3xl border ${mine ? "bg-white text-black border-white" : on ? "bg-rakt text-white border-rakt" : "bg-[#141414] text-muted border-line opacity-50"}`}
               style={{ animationDelay: `${GROUPS.indexOf(g) * 45}ms` }}>
               {g}
             </button>

@@ -31,7 +31,7 @@ export default async function Donate() {
         <div className="mt-6 card p-5">Add your blood group on <Link className="underline" href="/me">your account page</Link> to see which requests you can help.</div>
       )}
       {e && group && !e.ok && (
-        <div className="mt-6 rounded-2xl bg-[#fff7e6] border border-[#f5d48a] p-4">You donated recently. For your safety you can donate again in <b>{e.daysLeft} days</b>. You can still share these requests.</div>
+        <div className="mt-6 rounded-2xl bg-[#f5c451]/10 border border-[#f5c451]/35 p-4">You donated recently. For your safety you can donate again in <b>{e.daysLeft} days</b>. You can still share these requests.</div>
       )}
 
       {group && (
@@ -51,9 +51,9 @@ export default async function Donate() {
           <h2 className="font-display text-3xl mt-12">Recently done ✅</h2>
           <div className="mt-4 grid md:grid-cols-3 gap-3">
             {closed.map((r) => (
-              <Link key={r.id} href={`/r/${r.id}`} className="rounded-2xl border border-line p-4 flex items-center justify-between bg-white">
+              <Link key={r.id} href={`/r/${r.id}`} className="rounded-2xl border border-line p-4 flex items-center justify-between bg-[#141414]">
                 <span><b>{r.bloodGroup}</b> · {r.hospital}</span>
-                <span className="chip bg-ink text-white">done</span>
+                <span className="chip bg-[#1c1c1c] text-white">done</span>
               </Link>
             ))}
           </div>
@@ -80,7 +80,7 @@ function List({ items, dist, empty, highlight }: { items: BloodRequest[]; dist: 
                 <p className="text-sm mt-1">Needs <b>{r.units - r.unitsArranged}</b> more unit{r.units - r.unitsArranged !== 1 ? "s" : ""}{going ? ` · ${going} on the way` : ""}</p>
               </div>
             </div>
-            {r.scamFlags.length > 0 && <p className="text-xs text-[#8a6200] mt-3">⚠️ Call before you go</p>}
+            {r.scamFlags.length > 0 && <p className="text-xs text-[#f5c451] mt-3">⚠️ Call before you go</p>}
             <span className={`btn mt-4 text-sm ${highlight ? "btn-primary" : "btn-ghost"}`}>{highlight ? "See details and say yes →" : "See details →"}</span>
           </Link>
         );

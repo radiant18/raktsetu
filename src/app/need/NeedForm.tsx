@@ -161,14 +161,14 @@ export default function NeedForm() {
 }
 
 function Badge() {
-  return <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-[#0b7a5c] bg-[#eafaf4] rounded-full px-2 py-0.5">✨ AI</span>;
+  return <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-[#4fe3b2] bg-[#2fd39f]/10 rounded-full px-2 py-0.5">✨ AI</span>;
 }
 
 function Field({ label, k, f, setF, found, wide, type }: { label: string; k: keyof Fields; f: Fields; setF: (f: Fields) => void; found: Set<string>; wide?: boolean; type?: string }) {
   return (
     <label className={`block ${wide ? "col-span-2" : ""}`}>
       <span className="text-sm font-medium">{label} {found.has(k) && <Badge />}</span>
-      <input className={`input mt-1 ${found.has(k) ? "!border-[#9fe3cb] !bg-[#f4fdf9]" : ""}`} type={type ?? "text"} min={type === "number" ? 1 : undefined} value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
+      <input className={`input mt-1 ${found.has(k) ? "!border-[#2fd39f]/40 !bg-[#2fd39f]/5" : ""}`} type={type ?? "text"} min={type === "number" ? 1 : undefined} value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
     </label>
   );
 }

@@ -36,7 +36,7 @@ export default function OtpInput({ value, onChange, onComplete, state = "idle", 
           return (
             <div key={i}
               className={`otp-box relative flex-1 aspect-[4/5] max-w-16 rounded-2xl flex items-center justify-center font-display text-3xl transition-all duration-200
-                ${state === "success" ? "bg-[#eafaf4] border-2 border-pulse text-pulse" : state === "error" ? "bg-[#fdecef] border-2 border-rakt text-rakt" : isActive ? "bg-white border-2 border-ink shadow-[0_0_0_4px_rgba(224,17,43,.15)] -translate-y-0.5" : ch ? "bg-white border border-ink/40" : "bg-mist border border-line"}`}
+                ${state === "success" ? "bg-[#2fd39f]/10 border-2 border-pulse text-pulse" : state === "error" ? "bg-[#e8132f]/12 border-2 border-rakt text-rakt" : isActive ? "bg-[#141414] border-2 border-ink shadow-[0_0_0_4px_rgba(224,17,43,.15)] -translate-y-0.5" : ch ? "bg-[#141414] border border-ink/40" : "bg-mist border border-line"}`}
               style={{ transitionDelay: state === "success" ? `${i * 60}ms` : "0ms" }}>
               {ch ? <span key={ch + i} className="otp-digit">{ch}</span> : isActive ? <span className="otp-caret" /> : null}
             </div>

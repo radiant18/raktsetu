@@ -31,7 +31,7 @@ export default async function Home() {
           </div>
 
           {/* 3D drop */}
-          <div className="relative rounded-[28px] bg-ink overflow-hidden min-h-[380px] md:min-h-[440px]">
+          <div className="relative rounded-[28px] bg-[#0b0102] border border-line overflow-hidden min-h-[380px] md:min-h-[440px]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(224,17,43,.45),transparent_60%)]" />
             <DropScene />
             <div className="absolute top-5 left-6 right-6 flex justify-between text-[11px] uppercase tracking-[.18em] text-white/60 pointer-events-none">
@@ -119,17 +119,17 @@ function Stat({ n, l }: { n: number; l: string }) {
 
 function Door({ href, n, title, cta, points, dark }: { href: string; n: string; title: string; cta: string; points: string[]; dark?: boolean }) {
   return (
-    <Tilt className={`rounded-[28px] h-full ${dark ? "bg-ink text-white" : "card"}`} max={8}>
+    <Tilt className={`rounded-[28px] h-full ${dark ? "bg-rakt text-white" : "card"}`} max={8}>
       <Link href={href} className="group p-7 flex flex-col h-full">
         <div className="flex items-center justify-between">
-          <span className={`text-xs uppercase tracking-[.18em] ${dark ? "text-white/60" : "text-muted"}`}><span className="text-rakt font-bold">{"//"}</span> {n}</span>
+          <span className={`text-xs uppercase tracking-[.18em] ${dark ? "text-white/60" : "text-muted"}`}><span className={`font-bold ${dark ? "text-white" : "text-rakt"}`}>{"//"}</span> {n}</span>
           <span className="text-2xl transition group-hover:translate-x-1">→</span>
         </div>
         <h2 className="font-display text-3xl md:text-4xl mt-6 pop">{title}</h2>
-        <ul className={`mt-5 space-y-2 text-sm ${dark ? "text-white/75" : "text-muted"}`}>
-          {points.map((p) => <li key={p} className="flex gap-2"><span className="text-rakt">●</span>{p}</li>)}
+        <ul className={`mt-5 space-y-2 text-sm ${dark ? "text-white/90" : "text-muted"}`}>
+          {points.map((p) => <li key={p} className="flex gap-2"><span className={dark ? "text-white" : "text-rakt"}>●</span>{p}</li>)}
         </ul>
-        <span className={`btn mt-7 ${dark ? "btn-primary" : "btn-dark"}`}>{cta}</span>
+        <span className={`btn mt-7 ${dark ? "btn-dark" : "btn-primary"}`}>{cta}</span>
       </Link>
     </Tilt>
   );

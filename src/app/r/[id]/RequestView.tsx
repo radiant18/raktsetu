@@ -88,7 +88,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
       <section className="card p-6 md:p-8">
         <p className="font-semibold">{label}{r.verified && " · 🧾 confirmed by blood bank slip"}</p>
         <div className="mt-4 flex items-center gap-5">
-          <div className={`shrink-0 h-24 w-24 md:h-28 md:w-28 rounded-2xl ${r.status === "active" ? "bg-rakt" : "bg-ink"} text-white flex flex-col items-center justify-center`}>
+          <div className={`shrink-0 h-24 w-24 md:h-28 md:w-28 rounded-2xl ${r.status === "active" ? "bg-rakt" : "bg-[#1c1c1c]"} text-white flex flex-col items-center justify-center`}>
             <span className="text-4xl font-bold">{r.bloodGroup ?? "?"}</span>
             <span className="text-[10px] uppercase tracking-widest opacity-80">blood</span>
           </div>
@@ -103,20 +103,20 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
           <div className="mt-2 h-3 rounded-full bg-mist overflow-hidden"><div className="h-full bg-rakt rounded-full transition-all" style={{ width: `${pct}%` }} /></div>
         </div>
         {r.scamFlags.length > 0 && r.status === "active" && (
-          <div className="mt-5 rounded-2xl bg-[#fff7e6] border border-[#f5d48a] p-4 text-sm">
+          <div className="mt-5 rounded-2xl bg-[#f5c451]/10 border border-[#f5c451]/35 p-4 text-sm">
             <p className="font-semibold">⚠️ Please double-check before you go</p>
             <ul className="mt-1 space-y-0.5">{r.scamFlags.map((s) => <li key={s}>• {s}</li>)}</ul>
           </div>
         )}
         {r.status === "fulfilled" && (
-          <div className="mt-5 rounded-2xl bg-ink text-white p-5">
+          <div className="mt-5 rounded-2xl bg-[#1c1c1c] text-white p-5">
             <p className="font-display text-3xl">The patient got the blood. Please stop forwarding.</p>
             {r.closureNote && <p className="text-white/70 text-sm mt-1">{r.closureNote}</p>}
           </div>
         )}
       </section>
 
-      {msg && <div className={`rise mt-4 rounded-2xl p-4 ${msg.ok ? "bg-[#eafaf4] border border-[#9fe3cb]" : "bg-[#fdecef] border border-[#f3b3be]"}`}>{msg.text}</div>}
+      {msg && <div className={`rise mt-4 rounded-2xl p-4 ${msg.ok ? "bg-[#2fd39f]/10 border border-[#2fd39f]/40" : "bg-[#e8132f]/12 border border-[#e8132f]/45"}`}>{msg.text}</div>}
 
       {/* 2. What should YOU do? */}
       <div className="mt-6 grid lg:grid-cols-2 gap-6 items-start">
@@ -234,7 +234,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
               <p className="text-sm text-muted">Each donor hears it in their own language.</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {(["kn", "hi", "en"] as const).map((l) => (
-                  <button key={l} onClick={() => setLang(l)} className={`chip !px-4 !py-2 border ${lang === l ? "bg-ink text-white border-ink" : "bg-white border-line"}`}>{l === "kn" ? "ಕನ್ನಡ" : l === "hi" ? "हिंदी" : "English"}</button>
+                  <button key={l} onClick={() => setLang(l)} className={`chip !px-4 !py-2 border ${lang === l ? "bg-white text-black border-white" : "bg-[#141414] border-line"}`}>{l === "kn" ? "ಕನ್ನಡ" : l === "hi" ? "हिंदी" : "English"}</button>
                 ))}
                 <button className="btn btn-dark !py-2 text-sm ml-auto" disabled={!!busy} onClick={playAlert}>{busy === "alert" ? "Loading…" : "▶ Play"}</button>
               </div>

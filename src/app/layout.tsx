@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Screenshot the patient details. RaktSetu posts a verified blood request and alerts only matching donors nearby.",
 };
 
-export const viewport: Viewport = { themeColor: "#e0112b" };
+export const viewport: Viewport = { themeColor: "#060606" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

@@ -7,7 +7,7 @@ export interface Pin { id: string; lat: number; lng: number; label: string; grou
 export default function DonorMap({ center, pins, hospital }: { center: [number, number]; pins: Pin[]; hospital: string }) {
   return (
     <MapContainer center={center} zoom={12} scrollWheelZoom={false} style={{ height: 380, width: "100%" }}>
-      <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+      <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
       <Circle center={center} radius={15000} pathOptions={{ color: "#c8102e", weight: 1, fillOpacity: 0.03, dashArray: "4 6" }} />
       <CircleMarker center={center} radius={14} pathOptions={{ color: "#fff", weight: 3, fillColor: "#c8102e", fillOpacity: 1 }}>
         <Popup><b>{hospital}</b><br />Patient is here</Popup>
