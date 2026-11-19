@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
+import { get, put } from "@vercel/blob";
 import type { DB } from "./types";
 import { seedDonors } from "./seed";
 
@@ -8,6 +9,8 @@ import { seedDonors } from "./seed";
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = SUPABASE_URL && SUPABASE_KEY ? createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }) : null;
+const BLOB = Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+const BLOB_PATH = "raktsetu/db.json";
 const FILE = path.join(process.cwd(), ".data", "db.json");
 
 function empty(): DB {
@@ -20,6 +23,15 @@ function empty(): DB {
 }
 
 export async function readDB(): Promise<DB> {
+  if (BLOB && !supabase) {
+    const res = await get(BLOB_PATH, { access: "private", useCache: false });
+    if (!res || res.statusCode !== 200) {
+      const fresh = empty();
+      await writeDB(fresh);
+      return fresh;
+    }
+    return JSON.parse(await new Response(res.stream).text()) as DB;
+  }
   if (supabase) {
     const { data, error } = await supabase.from("kv").select("value").eq("key", "db").maybeSingle();
     if (error) throw new Error("DB read failed: " + error.message);
@@ -40,6 +52,10 @@ export async function readDB(): Promise<DB> {
 }
 
 export async function writeDB(db: DB): Promise<void> {
+  if (BLOB && !supabase) {
+    await put(BLOB_PATH, JSON.stringify(db), { access: "private", allowOverwrite: true, addRandomSuffix: false, contentType: "application/json", cacheControlMaxAge: 60 });
+    return;
+  }
   if (supabase) {
     const { error } = await supabase.from("kv").upsert({ key: "db", value: db });
     if (error) throw new Error("DB write failed: " + error.message);
