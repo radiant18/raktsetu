@@ -105,7 +105,7 @@ function Door({ href, n, title, cta, points, red }: { href: string; n: string; t
   return (
     <Link href={href} className={`group rounded-md p-7 flex flex-col border transition ${red ? "bg-ink text-white border-ink" : "card hover:border-ink"}`}>
       <div className="flex items-center justify-between">
-        <span className={`text-xs uppercase tracking-[.18em] ${red ? "text-white/60" : "text-muted"}`}><span className="text-rakt font-bold">//</span> {n}</span>
+        <span className={`text-xs uppercase tracking-[.18em] ${red ? "text-white/60" : "text-muted"}`}><span className="text-rakt font-bold">{"//"}</span> {n}</span>
         <span className="text-2xl transition group-hover:translate-x-1">→</span>
       </div>
       <h2 className="font-display text-3xl md:text-4xl mt-6">{title}</h2>
