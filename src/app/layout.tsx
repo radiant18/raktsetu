@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Unbounded, Noto_Sans_Devanagari, Noto_Sans_Kannada } from "next/font/google";
+import { Inter, Unbounded } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { LangProvider } from "@/components/Lang";
@@ -8,8 +8,6 @@ import { tr } from "@/lib/i18n";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const display = Unbounded({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600", "800"] });
-const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"], weight: ["400", "600", "800"] });
-const knda = Noto_Sans_Kannada({ variable: "--font-knda", subsets: ["kannada"], weight: ["400", "600", "800"] });
 
 export const metadata: Metadata = {
   title: "RaktSetu — blood requests from a screenshot",
@@ -23,7 +21,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const t = (s: string) => tr(lang, s);
   return (
     <html lang={lang}>
-      <body className={`${inter.variable} ${display.variable} ${deva.variable} ${knda.variable} min-h-screen`}>
+      {lang !== "en" && (
+        <head>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+          {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+          <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${lang === "hi" ? "Noto+Sans+Devanagari" : "Noto+Sans+Kannada"}:wght@400;600;800&display=swap`} />
+        </head>
+      )}
+      <body className={`${inter.variable} ${display.variable} min-h-screen`}>
         <LangProvider lang={lang}>
         <Nav />
         {children}
