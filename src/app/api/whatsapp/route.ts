@@ -11,7 +11,7 @@ export const maxDuration = 60;
 
 const xml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const twiml = (msg?: string) =>
-  new NextResponse(`<?xml version="1.0" encoding="UTF-8"?><Response>${msg ? `<Message>${xml(msg)}</Message>` : ""}</Response>`, { headers: { "Content-Type": "text/xml" } });
+  new NextResponse(`<?xml version="1.0" encoding="UTF-8"?><Response>${msg ? `<Message>${xml(msg)}</Message>` : ""}</Response>`, { headers: { "Content-Type": "text/xml; charset=utf-8" } });
 
 const HELP = `🩸 *RaktSetu bot*
 • Send a *screenshot* of a blood request or patient details → we post it live and alert matching donors
@@ -32,6 +32,8 @@ export async function POST(req: Request) {
   if (!validTwilioSignature(url, params, req.headers.get("x-twilio-signature"))) return new NextResponse("bad signature", { status: 403 });
 
   const phone = fromWa(params.From || "");
+  // Reply through the REST API (Twilio's tryout sender rejects inline TwiML replies).
+  const reply = (m: string) => { after(() => sendWhatsApp(phone, m).then(() => undefined)); return twiml(); };
   const body = (params.Body || "").trim();
   const cmd = body.toUpperCase().replace(/[^A-Z0-9 ]/g, "").trim();
   const db = await readDB();
@@ -39,22 +41,22 @@ export async function POST(req: Request) {
 
   // Account first: the bot only works for people verified on the website.
   if (!me || !me.name) {
-    return twiml(`👋 Welcome to RaktSetu!\nTo keep every request real, first create your free account with *this same number*:\n${SITE}/login\n\nThen come back and send *HI*.`);
+    return reply(`👋 Welcome to RaktSetu!\nTo keep every request real, first create your free account with *this same number*:\n${SITE}/login\n\nThen come back and send *HI*.`);
   }
 
-  if (!body && !Number(params.NumMedia)) return twiml(HELP);
-  if (["HI", "HELLO", "HELP", "START", "MENU"].includes(cmd)) return twiml(`Hi ${me.name.split(" ")[0]}! ${HELP}`);
+  if (!body && !Number(params.NumMedia)) return reply(HELP);
+  if (["HI", "HELLO", "HELP", "START", "MENU"].includes(cmd)) return reply(`Hi ${me.name.split(" ")[0]}! ${HELP}`);
 
-  if (["DONATE", "CAN I DONATE", "ELIGIBLE"].includes(cmd)) return twiml(await donateList(me));
+  if (["DONATE", "CAN I DONATE", "ELIGIBLE"].includes(cmd)) return reply(await donateList(me));
 
   if (["YES", "Y", "HAAN", "HA", "HAUDU"].includes(cmd)) {
-    if (!me.lastAlert) return twiml("No alert to accept yet. Send *DONATE* to see requests near you.");
+    if (!me.lastAlert) return reply("No alert to accept yet. Send *DONATE* to see requests near you.");
     const out = await mutate((d) => {
       const res = acceptRequest(d, d.requests.find((r) => r.id === me.lastAlert), d.users.find((u) => u.id === me.id));
       return "error" in res ? res : { ok: true, hospital: res.request.hospital, area: res.request.area, contact: res.request.contact, id: res.request.id, km: res.distanceKm };
     });
-    if ("error" in out) return twiml(`⚠️ ${out.error}`);
-    return twiml(`✅ Thank you, you're on the way!\n🏥 ${out.hospital}${out.area ? ", " + out.area : ""} (${out.km.toFixed(1)} km)\n📞 Family: ${out.contact ?? "see link"}\n\nAt the hospital, ask the family for their 4-digit code and send *CODE 1234*.\n${SITE}/r/${out.id}`);
+    if ("error" in out) return reply(`⚠️ ${out.error}`);
+    return reply(`✅ Thank you, you're on the way!\n🏥 ${out.hospital}${out.area ? ", " + out.area : ""} (${out.km.toFixed(1)} km)\n📞 Family: ${out.contact ?? "see link"}\n\nAt the hospital, ask the family for their 4-digit code and send *CODE 1234*.\n${SITE}/r/${out.id}`);
   }
 
   const code = cmd.match(/^CODE\s*(\d{4})$/);
@@ -70,18 +72,18 @@ export async function POST(req: Request) {
       u.trust = Math.min(100, u.trust + 10); u.donations += 1; u.lastDonation = new Date().toISOString();
       return { ok: true, trust: u.trust };
     });
-    return twiml("error" in out ? `⚠️ ${out.error}` : `🎉 Arrival confirmed. You're a hero! Trust score now ${out.trust}. We'll pause your alerts for 90 days so you can recover.`);
+    return reply("error" in out ? `⚠️ ${out.error}` : `🎉 Arrival confirmed. You're a hero! Trust score now ${out.trust}. We'll pause your alerts for 90 days so you can recover.`);
   }
 
-  if (cmd === "STATUS") return twiml(status(db.requests, me));
+  if (cmd === "STATUS") return reply(status(db.requests, me));
 
   // A screenshot or a typed request: process in the background (AI takes a few seconds), reply when done.
   const media = Number(params.NumMedia) > 0 && params.MediaUrl0 && (params.MediaContentType0 || "").startsWith("image/");
   if (media || (body.length > 15 && BLOODY.test(body))) {
     after(() => processRequest(me, phone, media ? params.MediaUrl0 : null, body).catch((e) => { console.error(e); return sendWhatsApp(phone, "❌ Sorry, something went wrong reading that. Try a clearer screenshot, or post it at " + SITE + "/need"); }));
-    return twiml(media ? "📸 Got it, reading the screenshot…" : "✍️ Got it, reading your message…");
+    return reply(media ? "📸 Got it, reading the screenshot…" : "✍️ Got it, reading your message…");
   }
-  return twiml(`I didn't get that. ${HELP}`);
+  return reply(`I didn't get that. ${HELP}`);
 }
 
 async function processRequest(me: User, phone: string, mediaUrl: string | null, text: string) {
