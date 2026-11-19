@@ -1,103 +1,108 @@
-import Image from "next/image";
+import Link from "next/link";
+import Checker from "@/components/Checker";
+import { readDB } from "@/lib/db";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const db = await readDB();
+  const live = db.requests.filter((r) => r.status === "active").length;
+  const donors = db.users.filter((u) => u.role === "donor").length;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-[520px] w-[520px] rounded-full bg-rakt/10 blur-3xl" />
+        <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 md:pt-24 relative">
+          <div className="inline-flex items-center gap-2 chip bg-white border border-line text-muted">
+            <span className="relative inline-flex h-2 w-2"><span className="ripple absolute inset-0 rounded-full" /><span className="relative h-2 w-2 rounded-full bg-rakt" /></span>
+            {live} live requests · {donors} verified donors in Bengaluru
+          </div>
+          <h1 className="font-display text-[44px] leading-[1.02] md:text-[84px] mt-6 max-w-4xl">
+            Every blood forward, <span className="italic text-rakt">verified</span> in seconds.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg text-muted leading-relaxed">
+            India finds emergency blood through WhatsApp forwards that never die. RaktSetu turns any forwarded screenshot into a live, verified request — matched only to compatible donors nearby — and kills the forward the moment the patient is safe.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#check" className="btn btn-primary">Check a forward</a>
+            <Link href="/voice" className="btn btn-ghost">🎙️ Need blood? Just speak</Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* Checker */}
+      <section id="check" className="mx-auto max-w-6xl px-5 scroll-mt-24">
+        <Checker />
+      </section>
+
+      {/* Problem */}
+      <section className="mx-auto max-w-6xl px-5 mt-24">
+        <p className="text-xs uppercase tracking-[.25em] text-muted">The jugaad we&apos;re replacing</p>
+        <h2 className="font-display text-4xl md:text-5xl mt-3 max-w-3xl">A forward has no expiry date, no owner and no off switch.</h2>
+        <div className="mt-10 grid md:grid-cols-3 gap-4">
+          {[
+            ["🧟", "Forwards that never die", "A request met on Monday is still circulating weeks later. Donors travel for a patient who no longer needs them."],
+            ["📵", "300 calls at 3 AM", "The family is in the ICU, and their number is on every group in the city."],
+            ["🎯", "The wrong 500 people", "An O− request reaches hundreds who can't donate, while the right donor 2 km away never sees it."],
+            ["💸", "Scams in the panic", "Fake requests ask for 'processing fees' over UPI from desperate people."],
+            ["🤷", "Nobody knows the status", "Is it still needed? How many units are left? Who is already on the way?"],
+            ["🚫", "No accountability", "Anyone can say 'I'm coming' and never show up. Nothing happens."],
+          ].map(([i, t, d]) => (
+            <div key={t} className="card p-6">
+              <div className="text-2xl">{i}</div>
+              <h3 className="font-semibold mt-3">{t}</h3>
+              <p className="text-sm text-muted mt-1 leading-relaxed">{d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How */}
+      <section className="mx-auto max-w-6xl px-5 mt-24">
+        <div className="rounded-[28px] bg-ink text-white p-8 md:p-12">
+          <p className="text-xs uppercase tracking-[.25em] text-white/50">How RaktSetu works</p>
+          <h2 className="font-display text-4xl md:text-5xl mt-3">People keep screenshotting. We make the screenshot do the work.</h2>
+          <div className="mt-10 grid md:grid-cols-4 gap-6">
+            {[
+              ["01", "Screenshot in", "Any forward, any language. AI reads blood group, units, hospital, patient, contact and date."],
+              ["02", "Verified", "Duplicates merge into one request. Old forwards expire. Money requests get flagged."],
+              ["03", "Matched", "Only compatible, eligible donors within 15 km are alerted — in their own language."],
+              ["04", "Closed with proof", "The blood bank slip screenshot closes the request. Every copy of the forward now says FULFILLED."],
+            ].map(([n, t, d]) => (
+              <div key={n}>
+                <p className="font-display text-5xl text-rakt">{n}</p>
+                <h3 className="font-semibold mt-2">{t}</h3>
+                <p className="text-sm text-white/60 mt-1 leading-relaxed">{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust */}
+      <section className="mx-auto max-w-6xl px-5 mt-24 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p className="text-xs uppercase tracking-[.25em] text-muted">Built for trust</p>
+          <h2 className="font-display text-4xl md:text-5xl mt-3">No fake donors. No ghost promises.</h2>
+          <p className="text-muted mt-4 leading-relaxed">Every donor and family is verified with a one-time code. Donors who accept get an arrival code that only the family holds — so we know who really showed up.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          {[
+            ["🔐", "OTP-verified accounts"],
+            ["🔢", "Arrival code at the hospital"],
+            ["⭐", "Trust score per donor"],
+            ["⏱️", "Auto-release after 2 hours"],
+            ["☝️", "One active promise at a time"],
+            ["🩸", "90-day donation gap enforced"],
+            ["🚩", "3 reports hide a request"],
+            ["🧾", "Verified close with bank slip"],
+          ].map(([i, t]) => (
+            <div key={t} className="card p-4 flex items-center gap-3"><span className="text-xl">{i}</span><span className="font-medium">{t}</span></div>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
