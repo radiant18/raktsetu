@@ -1,0 +1,27 @@
+import { NextResponse } from "next/server";
+import { currentUserId } from "@/lib/auth";
+import { mutate } from "@/lib/db";
+import { normaliseGroup } from "@/lib/blood";
+import { locate } from "@/lib/geo";
+
+export async function PATCH(req: Request) {
+  const id = await currentUserId();
+  if (!id) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
+  const b = (await req.json().catch(() => ({}))) as { name?: string; role?: string; bloodGroup?: string; area?: string; language?: string };
+  const name = (b.name ?? "").trim().slice(0, 60);
+  if (name.length < 2) return NextResponse.json({ error: "Enter your full name." }, { status: 400 });
+  const role = b.role === "family" ? "family" : "donor";
+  const group = normaliseGroup(b.bloodGroup);
+  if (role === "donor" && !group) return NextResponse.json({ error: "Donors must choose a blood group." }, { status: 400 });
+  const area = (b.area ?? "").trim().slice(0, 80);
+  const [lat, lng] = area ? await locate(area, null, "Bengaluru") : [12.9716, 77.5946];
+  const user = await mutate((db) => {
+    const u = db.users.find((x) => x.id === id);
+    if (!u) return null;
+    u.name = name; u.role = role; u.bloodGroup = group; u.area = area; u.lat = lat; u.lng = lng;
+    u.language = b.language === "hi" || b.language === "kn" ? b.language : "en";
+    return u;
+  });
+  if (!user) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+  return NextResponse.json({ ok: true, user });
+}
