@@ -1,5 +1,5 @@
 "use client";
-import { Droplet, Hospital } from "lucide-react";
+import { Droplet, Hospital, Paperclip, Sparkles, Receipt } from "lucide-react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BLOOD_GROUPS } from "@/lib/types";
@@ -22,6 +22,8 @@ export default function LoginForm() {
   const [busy, setBusy] = useState(false);
   const [otpState, setOtpState] = useState<"idle" | "error" | "success">("idle");
   const [p, setP] = useState({ name: "", role: "", bloodGroup: "", place: DEFAULT_PLACE, language: "en" });
+  const [history, setHistory] = useState<"" | "first" | "before">("");
+  const [cert, setCert] = useState<File | null>(null);
   const idx = step === "contact" ? 0 : step === "code" ? 1 : 2;
   const isEmail = contact.includes("@");
 
@@ -43,7 +45,7 @@ export default function LoginForm() {
     setTimeout(() => { if (j.needsProfile) setStep("profile"); else { router.push(next); router.refresh(); } }, 650);
   }
 
-  const missing = ([!p.name && "your name", !p.role && "donate or need blood", p.role === "donor" && !p.bloodGroup && "blood group", !p.place.city && "city"].filter(Boolean) as string[]).map(t);
+  const missing = ([!p.name && "your name", !p.role && "donate or need blood", p.role === "donor" && !p.bloodGroup && "blood group", p.role === "donor" && !history && "donation history", !p.place.city && "city"].filter(Boolean) as string[]).map(t);
 
   return (
     <div className="card p-7 md:p-9 rise">
@@ -100,7 +102,15 @@ export default function LoginForm() {
       )}
 
       {step === "profile" && (
-        <form className="mt-8 space-y-5" onSubmit={async (e) => { e.preventDefault(); if (missing.length) return; const j = await post("/api/me", { name: p.name, role: p.role || "donor", bloodGroup: p.bloodGroup, language: p.language, state: p.place.state, city: p.place.city, area: p.place.locality }, "PATCH"); if (j) { router.push(next); router.refresh(); } }}>
+        <form className="mt-8 space-y-5" onSubmit={async (e) => { e.preventDefault(); if (missing.length) return; const j = await post("/api/me", { name: p.name, role: p.role || "donor", bloodGroup: p.bloodGroup, language: p.language, state: p.place.state, city: p.place.city, area: p.place.locality }, "PATCH"); if (!j) return;
+            if (p.role === "donor" && history === "first") await post("/api/passport", { firstTime: true });
+            if (p.role === "donor" && history === "before" && cert) {
+              setBusy(true); setErr(null);
+              const fd = new FormData(); fd.append("image", cert);
+              const r = await fetch("/api/passport", { method: "POST", body: fd }).catch(() => null); const c = await r?.json().catch(() => null); setBusy(false);
+              if (!r?.ok) { setErr(`${c?.error ?? "Couldn't read the certificate."} ${t("Try another photo, or skip it for now.")}`); setCert(null); return; }
+            }
+            router.push(next); router.refresh(); }}>
           <div>
             <h1 className="font-display text-3xl md:text-4xl">{t("Almost done")}</h1>
             <p className="text-muted mt-2">{t("Tell us a little about you.")}</p>
@@ -131,6 +141,28 @@ export default function LoginForm() {
               ))}
             </div>
           </div>
+          {p.role === "donor" && (
+            <div>
+              <span className="text-sm font-medium">{t("Have you donated blood before?")}</span>
+              <div className="mt-1 grid grid-cols-2 gap-3">
+                {([["first", Sparkles, "First time", "No certificate needed"], ["before", Receipt, "Donated before", "Upload your last certificate"]] as const).map(([v, Ic, ti, d]) => (
+                  <button type="button" key={v} onClick={() => setHistory(v)}
+                    className={`text-left rounded-2xl border p-4 transition ${history === v ? "border-rakt bg-rakt/10 shadow-[0_0_0_3px_rgba(232,19,47,.2)]" : "border-line bg-[var(--surface)] hover:border-ink/50"}`}>
+                    <Ic className="h-5 w-5 text-rakt" />
+                    <p className="font-semibold mt-2">{t(ti)}</p>
+                    <p className="text-xs text-muted mt-1 leading-snug">{t(d)}</p>
+                  </button>
+                ))}
+              </div>
+              {history === "before" && (
+                <div className="mt-3 rounded-2xl border border-line p-4">
+                  <p className="text-sm text-muted">{t("A photo of the certificate or the blood bank SMS. We read the date so we only alert you when it's safe to donate again (90 days).")}</p>
+                  <label className="btn btn-ghost text-sm cursor-pointer mt-3 w-full"><Paperclip className="ic" /> {cert ? cert.name : t("Choose photo")}<input type="file" accept="image/*" className="hidden" onChange={(e) => setCert(e.target.files?.[0] ?? null)} /></label>
+                  <p className="text-xs text-muted mt-2">{t("Don't have it handy? You can add it later from your profile.")}</p>
+                </div>
+              )}
+            </div>
+          )}
           <PlacePicker value={p.place} onChange={(place) => setP({ ...p, place })} />
           <div>
             <label className="block">
