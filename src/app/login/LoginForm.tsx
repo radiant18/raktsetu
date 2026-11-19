@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BLOOD_GROUPS } from "@/lib/types";
+import OtpInput from "@/components/OtpInput";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function LoginForm() {
   const [channel, setChannel] = useState("email");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [otpState, setOtpState] = useState<"idle" | "error" | "success">("idle");
   const [p, setP] = useState({ name: "", role: "donor", bloodGroup: "", area: "", language: "en" });
 
   async function post(url: string, body: object, method = "POST") {
@@ -39,26 +41,38 @@ export default function LoginForm() {
         </form>
       )}
 
-      {step === "code" && (
-        <form className="mt-6 space-y-3" onSubmit={async (e) => { e.preventDefault(); const j = await post("/api/auth/verify", { contact, code }); if (j) { if (j.needsProfile) setStep("profile"); else { router.push(next); router.refresh(); } } }}>
-          <p className="text-sm text-muted">Enter the 6-digit code sent to <b className="text-ink">{contact}</b>.</p>
-          {demo && (
-            <div className="rounded-md bg-[#fff7e6] border border-[#f5d48a] p-3 text-sm">
-              <b>Prototype mode:</b> {channel === "phone" ? "SMS delivery needs a DLT-registered sender in India, so" : "email delivery isn't configured, so"} your code is shown here: <span className="font-mono font-bold text-lg tracking-widest">{demo}</span>
+      {step === "code" && (() => {
+        const verify = async (c: string) => {
+          if (c.length !== 6 || busy) return;
+          const j = await post("/api/auth/verify", { contact, code: c });
+          if (!j) { setOtpState("error"); setTimeout(() => { setOtpState("idle"); setCode(""); }, 700); return; }
+          setOtpState("success");
+          setTimeout(() => { if (j.needsProfile) setStep("profile"); else { router.push(next); router.refresh(); } }, 650);
+        };
+        return (
+          <form className="mt-6 space-y-5" onSubmit={(e) => { e.preventDefault(); verify(code); }}>
+            <div>
+              <p className="font-display text-2xl">Verification Code</p>
+              <p className="text-sm text-muted mt-1">Enter the 6-digit code sent to <b className="text-ink">{contact}</b></p>
             </div>
-          )}
-          <input className="input font-mono text-2xl tracking-[.5em] text-center" autoFocus maxLength={6} inputMode="numeric" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} placeholder="••••••" />
-          <button className="btn btn-primary w-full" disabled={busy || code.length !== 6}>{busy ? "Checking…" : "Verify"}</button>
-          <button type="button" className="text-sm text-muted underline" onClick={() => { setStep("contact"); setCode(""); }}>Use a different number</button>
-        </form>
-      )}
+            {demo && (
+              <div className="rounded-2xl bg-[#fff7e6] border border-[#f5d48a] p-3 text-sm">
+                <b>Prototype mode:</b> {channel === "phone" ? "SMS needs a DLT-registered sender in India, so" : "email isn't configured, so"} your code is: <button type="button" className="font-mono font-bold text-lg tracking-widest underline decoration-dotted" onClick={() => { setCode(demo); verify(demo); }}>{demo}</button> <span className="text-muted">(tap to fill)</span>
+              </div>
+            )}
+            <OtpInput value={code} onChange={(v) => { setCode(v); setErr(null); }} onComplete={verify} state={otpState} />
+            <button className="btn btn-primary w-full" disabled={busy || code.length !== 6}>{otpState === "success" ? "✓ Verified" : busy ? "Checking…" : "Verify"}</button>
+            <button type="button" className="text-sm text-muted underline" onClick={() => { setStep("contact"); setCode(""); setOtpState("idle"); }}>Use a different number</button>
+          </form>
+        );
+      })()}
 
       {step === "profile" && (
         <form className="mt-6 space-y-3" onSubmit={async (e) => { e.preventDefault(); const j = await post("/api/me", p, "PATCH"); if (j) { router.push(next); router.refresh(); } }}>
           <input className="input" placeholder="Full name" value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} />
           <div className="grid grid-cols-2 gap-2">
             {[["donor", "🩸 I want to donate"], ["family", "🏥 I need blood"]].map(([v, l]) => (
-              <button type="button" key={v} onClick={() => setP({ ...p, role: v })} className={`rounded-md border p-3 text-sm font-medium ${p.role === v ? "border-rakt bg-rakt/5" : "border-line bg-white"}`}>{l}</button>
+              <button type="button" key={v} onClick={() => setP({ ...p, role: v })} className={`rounded-2xl border p-3 text-sm font-medium ${p.role === v ? "border-rakt bg-rakt/5" : "border-line bg-white"}`}>{l}</button>
             ))}
           </div>
           <div className="grid grid-cols-4 gap-2">

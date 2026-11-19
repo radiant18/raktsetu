@@ -80,7 +80,7 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/r/${made.id}/poster`} alt="Verified poster" className="w-full rounded-md shadow-2xl border border-line" />
+        <img src={`/r/${made.id}/poster`} alt="Verified poster" className="w-full rounded-2xl shadow-2xl border border-line" />
       </div>
     );
   }

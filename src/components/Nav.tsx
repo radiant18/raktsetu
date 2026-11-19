@@ -17,7 +17,7 @@ export default async function Nav() {
         <p className="hidden lg:block text-xs text-muted">{today} · Bengaluru</p>
         <div className="flex items-center gap-1">
           <nav className="hidden md:flex items-center gap-1 text-sm mr-2">
-            {LINKS.map(([h, l]) => <Link key={h} href={h} className="px-3 py-2 rounded-md hover:bg-mist font-medium">{l}</Link>)}
+            {LINKS.map(([h, l]) => <Link key={h} href={h} className="px-3 py-2 rounded-2xl hover:bg-mist font-medium">{l}</Link>)}
           </nav>
           {user ? (
             <Link href="/me" className="btn btn-ghost !py-2 !px-4 text-sm">{user.name.split(" ")[0] || "My account"}</Link>
@@ -27,7 +27,7 @@ export default async function Nav() {
         </div>
       </div>
       <nav className="md:hidden flex gap-2 px-4 pb-2 text-sm">
-        {LINKS.map(([h, l]) => <Link key={h} href={h} className="flex-1 text-center px-3 py-2 rounded-md border border-ink font-medium">{l}</Link>)}
+        {LINKS.map(([h, l]) => <Link key={h} href={h} className="flex-1 text-center px-3 py-2 rounded-2xl border border-ink font-medium">{l}</Link>)}
       </nav>
     </header>
   );

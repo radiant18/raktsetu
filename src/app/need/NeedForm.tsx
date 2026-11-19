@@ -82,7 +82,7 @@ export default function NeedForm() {
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/r/${r.id}/poster`} alt="Poster with QR code" className="w-full rounded-md shadow-2xl border border-line" />
+        <img src={`/r/${r.id}/poster`} alt="Poster with QR code" className="w-full rounded-2xl shadow-2xl border border-line" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function NeedForm() {
           </div>
         ) : (
           <div className="text-center p-8">
-            <div className="mx-auto mb-4 h-16 w-16 rounded-md bg-rakt/10 flex items-center justify-center text-3xl">📸</div>
+            <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-rakt/10 flex items-center justify-center text-3xl">📸</div>
             <p className="font-semibold text-lg">Add a screenshot of the patient details</p>
             <p className="text-sm text-muted mt-1">Hospital form, doctor&apos;s note, patient file or a WhatsApp message</p>
             <p className="text-xs text-muted mt-3">Tap to choose · drag it here · or paste (Ctrl/⌘ + V)</p>
