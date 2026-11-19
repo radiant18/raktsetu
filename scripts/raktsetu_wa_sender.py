@@ -32,20 +32,45 @@ def api(method, path, body=None):
         return json.loads(r.read())
 
 
+def focus_whatsapp():
+    """Bring the browser tab with WhatsApp to the front and maximise it (Windows)."""
+    try:
+        import pygetwindow as gw
+        wins = [x for x in gw.getAllWindows() if "whatsapp" in (x.title or "").lower()]
+        if wins:
+            win = wins[0]
+            if win.isMinimized:
+                win.restore()
+            try:
+                win.activate()
+            except Exception:  # Windows sometimes refuses the first activate; a click fixes it
+                import pyautogui
+                pyautogui.click(win.left + win.width // 2, win.top + 10)
+            try:
+                win.maximize()
+            except Exception:
+                pass
+            time.sleep(1.5)
+            return True
+    except Exception as e:
+        print(f"   (couldn't focus the browser: {e})")
+    return False
+
+
 def send(phone, text, dry):
     if dry:
         print(f"   (dry run) → {phone}\n{text}\n")
         return True
     import pywhatkit, pyautogui  # imported lazily so --dry-run works without them
-    # Open the chat with the message typed in, but don't trust pywhatkit's own Enter:
-    # WhatsApp Web is often still loading when it presses it.
+    # pywhatkit opens the chat with the message typed in. Its own Enter often lands in the wrong
+    # window (PowerShell stays in front on Windows), so bring WhatsApp to the front and press it ourselves.
     pywhatkit.sendwhatmsg_instantly(phone, text, wait_time=WAIT, tab_close=False)
+    focus_whatsapp()
     w, h = pyautogui.size()
-    time.sleep(3)
-    pyautogui.click(w * 0.6, h * 0.92)   # click into the message box (bottom of the chat)
+    pyautogui.click(w * 0.65, h * 0.90)   # into the message box at the bottom of the chat
     time.sleep(1)
     pyautogui.press("enter")
-    time.sleep(4)                        # let it actually send
+    time.sleep(4)                         # let it actually send
     pyautogui.hotkey("command" if sys.platform == "darwin" else "ctrl", "w")  # close the tab
     time.sleep(1)
     return True
