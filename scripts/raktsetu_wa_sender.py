@@ -21,6 +21,7 @@ from urllib import request as urlreq
 
 SITE = os.environ.get("RAKTSETU_URL", "https://raktsetu-red.vercel.app").rstrip("/")
 KEY = os.environ.get("RAKTSETU_WORKER_KEY", "")
+WAIT = 25  # seconds to let WhatsApp Web load before typing
 
 
 def api(method, path, body=None):
@@ -35,8 +36,18 @@ def send(phone, text, dry):
     if dry:
         print(f"   (dry run) → {phone}\n{text}\n")
         return True
-    import pywhatkit  # imported lazily so --dry-run works without it
-    pywhatkit.sendwhatmsg_instantly(phone, text, wait_time=15, tab_close=True, close_time=4)
+    import pywhatkit, pyautogui  # imported lazily so --dry-run works without them
+    # Open the chat with the message typed in, but don't trust pywhatkit's own Enter:
+    # WhatsApp Web is often still loading when it presses it.
+    pywhatkit.sendwhatmsg_instantly(phone, text, wait_time=WAIT, tab_close=False)
+    w, h = pyautogui.size()
+    time.sleep(3)
+    pyautogui.click(w * 0.6, h * 0.92)   # click into the message box (bottom of the chat)
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(4)                        # let it actually send
+    pyautogui.hotkey("command" if sys.platform == "darwin" else "ctrl", "w")  # close the tab
+    time.sleep(1)
     return True
 
 
@@ -64,8 +75,11 @@ def main():
     ap.add_argument("--once", action="store_true", help="send what's waiting, then exit")
     ap.add_argument("--dry-run", action="store_true", help="print messages instead of sending (doesn't mark them sent)")
     ap.add_argument("--every", type=float, default=10, help="seconds between checks (default 10)")
+    ap.add_argument("--wait", type=int, default=25, help="seconds to let WhatsApp Web load (default 25; raise it on a slow laptop)")
     ap.add_argument("--site", help=f"RaktSetu URL (default {SITE})")
     a = ap.parse_args()
+    global WAIT
+    WAIT = a.wait
     if a.site:
         SITE = a.site.rstrip("/")
     if not KEY:
