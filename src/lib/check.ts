@@ -40,7 +40,7 @@ export function scamReasons(e: Extracted): string[] {
   return Array.from(new Set(out));
 }
 
-export async function checkForward(db: DB, e: Extracted, fingerprint: string | null, opts: { create: boolean; userId: string | null; source: "screenshot" | "voice" }): Promise<CheckResult> {
+export async function checkForward(db: DB, e: Extracted, fingerprint: string | null, opts: { create: boolean; userId: string | null; source: "screenshot" | "voice" | "whatsapp" }): Promise<CheckResult> {
   db.stats.forwardsChecked += 1;
   if (!e.isBloodRequest) return { verdict: "not_a_request", request: null, extracted: e, reasons: ["This doesn't look like a blood request."] };
 

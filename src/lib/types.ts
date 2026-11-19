@@ -27,7 +27,7 @@ export interface BloodRequest {
   lat: number;
   lng: number;
   status: RequestStatus;
-  source: "screenshot" | "voice";
+  source: "screenshot" | "voice" | "whatsapp";
   fingerprints: string[]; // image hashes of every screenshot seen for this request
   timesChecked: number;
   createdAt: string;
@@ -60,6 +60,7 @@ export interface User {
   blocked: boolean;
   createdAt: string;
   demo?: boolean;
+  lastAlert?: string; // request id of the last WhatsApp alert (so a donor can reply YES)
 }
 
 export interface OtpEntry {

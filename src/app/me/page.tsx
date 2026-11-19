@@ -4,6 +4,7 @@ import { currentUser } from "@/lib/auth";
 import { readDB } from "@/lib/db";
 import { eligibility, trustLabel, DONATION_GAP_DAYS } from "@/lib/blood";
 import Passport from "./Passport";
+import WhatsAppCard from "@/components/WhatsAppCard";
 import Logout from "./Logout";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +50,7 @@ export default async function Me() {
       </div>
 
       {u.role === "donor" && <Passport />}
+      <div className="mt-6"><WhatsAppCard phone={u.contact.startsWith("+") ? u.contact : null} /></div>
 
       <section className="mt-8 grid md:grid-cols-2 gap-4">
         <div className="card p-6">

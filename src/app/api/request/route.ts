@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { notifyDonors } from "@/lib/whatsapp";
 import { currentUserId } from "@/lib/auth";
 import { checkForward } from "@/lib/check";
 import { mutate } from "@/lib/db";
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
   const fingerprint = str("fingerprint");
   try {
     const result = await mutate((db) => checkForward(db, e, fingerprint, { create: true, userId: uidv, source: "screenshot" }));
+    if (result.request && (result.verdict === "created" || result.verdict === "unverified")) { const id = result.request.id; after(() => notifyDonors(id).catch(console.error)); }
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : "Failed" }, { status: 500 });

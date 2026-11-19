@@ -2,6 +2,7 @@ import Link from "next/link";
 import { readDB } from "@/lib/db";
 import { CountUp, DropScene, Reveal, Tilt } from "@/components/Motion";
 import BloodMatch from "@/components/BloodMatch";
+import WhatsAppCard from "@/components/WhatsAppCard";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,7 @@ export default async function Home() {
       {/* Interactive blood match */}
       <section className="mx-auto max-w-6xl px-4 mt-14">
         <Reveal><BloodMatch /></Reveal>
+        <Reveal><div className="mt-6"><WhatsAppCard /></div></Reveal>
       </section>
 
       {/* How it works */}
