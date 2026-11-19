@@ -7,14 +7,17 @@ import { locate } from "@/lib/geo";
 export async function PATCH(req: Request) {
   const id = await currentUserId();
   if (!id) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
-  const b = (await req.json().catch(() => ({}))) as { name?: string; role?: string; bloodGroup?: string; area?: string; language?: string };
+  const b = (await req.json().catch(() => ({}))) as { name?: string; role?: string; bloodGroup?: string; area?: string; city?: string; state?: string; language?: string };
   const name = (b.name ?? "").trim().slice(0, 60);
   if (name.length < 2) return NextResponse.json({ error: "Enter your full name." }, { status: 400 });
   const role = b.role === "family" ? "family" : "donor";
   const group = normaliseGroup(b.bloodGroup);
   if (role === "donor" && !group) return NextResponse.json({ error: "Donors must choose a blood group." }, { status: 400 });
-  const area = (b.area ?? "").trim().slice(0, 80);
-  const [lat, lng] = area ? await locate(area, null, "Bengaluru") : [12.9716, 77.5946];
+  const locality = (b.area ?? "").trim().slice(0, 80);
+  const city = (b.city ?? "").trim().slice(0, 60);
+  const state = (b.state ?? "").trim().slice(0, 60);
+  const area = [locality, city].filter(Boolean).join(", ") || "Bengaluru";
+  const [lat, lng] = await locate(null, locality || null, [city || "Bengaluru", state].filter(Boolean).join(", "));
   const user = await mutate((db) => {
     const u = db.users.find((x) => x.id === id);
     if (!u) return null;

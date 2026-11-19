@@ -1,4 +1,4 @@
-import { Droplet, Hospital, KeyRound, Receipt, ShieldCheck, Star } from "lucide-react";
+import { KeyRound, Receipt, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
 import { readDB } from "@/lib/db";
 import { CountUp, DropScene, Reveal, Tilt } from "@/components/Motion";
@@ -30,10 +30,6 @@ export default async function Home() {
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted">{t("Take a screenshot of the patient's details. Our AI reads the name, hospital and blood group, posts the request, and alerts only donors who can actually give, near the hospital.")}</p>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/need" className="btn btn-primary !px-6 !py-4 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgba(224,17,43,.8)]"><Hospital className="ic" /> {t("I need blood")}</Link>
-              <Link href="/live" className="btn btn-ghost !px-6 !py-4 hover:-translate-y-0.5"><Droplet className="ic" /> {t("I want to donate")}</Link>
-            </div>
           </div>
 
           {/* 3D drop */}
@@ -59,7 +55,7 @@ export default async function Home() {
 
       {/* Two doors */}
       <section className="mx-auto max-w-6xl px-4 mt-14 grid md:grid-cols-2 gap-6">
-        <Reveal><Door href="/need" n="01" title={t("I need blood")} cta={t("Post with a screenshot")}
+        <Reveal><Door href="/need" n="01" title={t("I need blood")} cta={t("Request blood now")}
           points={["Screenshot the patient details or hospital form", "AI fills in name, hospital, blood group", "Check it, press Post. Donors get an alert"].map(t)} dark /></Reveal>
         <Reveal delay={120}><Door href="/live" n="02" title={t("I want to donate")} cta={t("See who needs you")}
           points={["See requests your blood group can help", "Nearest first, with distance", "Say yes, go, confirm with a 4-digit code"].map(t)} /></Reveal>

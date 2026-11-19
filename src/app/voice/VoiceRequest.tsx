@@ -77,6 +77,24 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
     setListening(false);
   }
 
+  // Spacebar = push-to-talk anywhere on the page (except while typing in a text box).
+  useEffect(() => {
+    const typing = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName));
+    const down = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || typing(e.target)) return;
+      e.preventDefault(); // no page scroll / button click
+      if (!e.repeat) start();
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || typing(e.target)) return;
+      e.preventDefault();
+      stop();
+    };
+    window.addEventListener("keydown", down);
+    window.addEventListener("keyup", up);
+    return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
+  });
+
   useEffect(() => {
     const off = () => stop();
     window.addEventListener("blur", off);
@@ -130,8 +148,8 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
           onPointerUp={stop}
           onPointerCancel={stop}
           onLostPointerCapture={stop}
-          onKeyDown={(e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); start(); } }}
-          onKeyUp={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } }}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.repeat) { e.preventDefault(); start(); } }}
+          onKeyUp={(e) => { if (e.key === "Enter") { e.preventDefault(); stop(); } }}
           onContextMenu={(e) => e.preventDefault()}
           style={{ touchAction: "none", userSelect: "none", WebkitUserSelect: "none" }}
           className={`relative h-36 w-36 rounded-full flex items-center justify-center text-white transition select-none ${listening ? "bg-rakt scale-110 shadow-[0_0_0_10px_rgba(232,19,47,.18)]" : "bg-[#1c1c1c] hover:bg-[#2a0a0e] active:scale-95"}`}
@@ -140,7 +158,10 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
           {listening && <span className="ripple absolute inset-0 rounded-full" />}
           <span className="relative">{listening ? <Square className="h-10 w-10 fill-current" /> : <Mic className="h-12 w-12" />}</span>
         </button>
-        <p className="mt-5 font-semibold">{listening ? "Listening… release to stop" : "Hold to talk"}</p>
+        <p className="mt-5 font-semibold flex items-center gap-2 justify-center">
+          {listening ? <>Listening… release <kbd className="kbd">Space</kbd> to stop</> : <>Hold <kbd className="kbd">Space</kbd> to talk</>}
+        </p>
+        <p className="text-xs text-muted mt-1">On a phone: press and hold the mic button.</p>
         <p className="text-sm text-muted mt-1 max-w-md">Say the blood group, how many units, the hospital and the patient&apos;s name. For example: <i>&ldquo;{LANGS.find((l) => l[0] === lang)?.[2]}&rdquo;</i></p>
         {!supported && <p className="text-sm text-rakt mt-3">Voice input needs Chrome or Edge. You can type below instead.</p>}
       </div>

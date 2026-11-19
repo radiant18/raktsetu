@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BLOOD_GROUPS } from "@/lib/types";
 import OtpInput from "@/components/OtpInput";
 import { useT } from "@/components/Lang";
+import PlacePicker, { DEFAULT_PLACE } from "@/components/PlacePicker";
 
 const STEPS = ["Phone", "Code", "About you"] as const;
 
@@ -20,7 +21,7 @@ export default function LoginForm() {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [otpState, setOtpState] = useState<"idle" | "error" | "success">("idle");
-  const [p, setP] = useState({ name: "", role: "", bloodGroup: "", area: "", language: "en" });
+  const [p, setP] = useState({ name: "", role: "", bloodGroup: "", place: DEFAULT_PLACE, language: "en" });
   const idx = step === "contact" ? 0 : step === "code" ? 1 : 2;
   const isEmail = contact.includes("@");
 
@@ -42,7 +43,7 @@ export default function LoginForm() {
     setTimeout(() => { if (j.needsProfile) setStep("profile"); else { router.push(next); router.refresh(); } }, 650);
   }
 
-  const missing = ([!p.name && "your name", !p.role && "donate or need blood", p.role === "donor" && !p.bloodGroup && "blood group", !p.area && "area"].filter(Boolean) as string[]).map(t);
+  const missing = ([!p.name && "your name", !p.role && "donate or need blood", p.role === "donor" && !p.bloodGroup && "blood group", !p.place.city && "city"].filter(Boolean) as string[]).map(t);
 
   return (
     <div className="card p-7 md:p-9 rise">
@@ -99,7 +100,7 @@ export default function LoginForm() {
       )}
 
       {step === "profile" && (
-        <form className="mt-8 space-y-5" onSubmit={async (e) => { e.preventDefault(); if (missing.length) return; const j = await post("/api/me", { ...p, role: p.role || "donor" }, "PATCH"); if (j) { router.push(next); router.refresh(); } }}>
+        <form className="mt-8 space-y-5" onSubmit={async (e) => { e.preventDefault(); if (missing.length) return; const j = await post("/api/me", { name: p.name, role: p.role || "donor", bloodGroup: p.bloodGroup, language: p.language, state: p.place.state, city: p.place.city, area: p.place.locality }, "PATCH"); if (j) { router.push(next); router.refresh(); } }}>
           <div>
             <h1 className="font-display text-3xl md:text-4xl">{t("Almost done")}</h1>
             <p className="text-muted mt-2">{t("Tell us a little about you.")}</p>
@@ -130,11 +131,8 @@ export default function LoginForm() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-[1.4fr_1fr] gap-3">
-            <label className="block">
-              <span className="text-sm font-medium">{t("Your area")}</span>
-              <input className="input mt-1" placeholder="e.g. Koramangala" value={p.area} onChange={(e) => setP({ ...p, area: e.target.value })} />
-            </label>
+          <PlacePicker value={p.place} onChange={(place) => setP({ ...p, place })} />
+          <div>
             <label className="block">
               <span className="text-sm font-medium">{t("Alert language")}</span>
               <select className="input mt-1" value={p.language} onChange={(e) => setP({ ...p, language: e.target.value })}>

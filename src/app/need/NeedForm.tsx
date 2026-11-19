@@ -1,8 +1,10 @@
 "use client";
-import { CheckCircle2, Download, Droplet, ImagePlus, MessageCircle, Sparkles } from "lucide-react";
+import { CheckCircle2, Download, Droplet, ImagePlus, MessageCircle, Sparkles, Keyboard } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useT } from "@/components/Lang";
+import PlacePicker, { DEFAULT_PLACE, type Place } from "@/components/PlacePicker";
+import { findPlace } from "@/lib/places";
 import type { BloodRequest, Extracted } from "@/lib/types";
 
 const GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -14,6 +16,7 @@ export default function NeedForm() {
   const [preview, setPreview] = useState<string | null>(null);
   const [reading, setReading] = useState(false);
   const [f, setF] = useState<Fields | null>(null);
+  const [place, setPlace] = useState<Place>(DEFAULT_PLACE);
   const [found, setFound] = useState<Set<string>>(new Set());
   const [fingerprint, setFingerprint] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
@@ -36,6 +39,8 @@ export default function NeedForm() {
         area: [e.area, e.city].filter(Boolean).join(", "), contact: e.contact ?? "", component: e.component || "Whole blood",
       };
       setFound(new Set(Object.entries(next).filter(([k, v]) => v && !(k === "units" && !e.units) && k !== "component").map(([k]) => k)));
+      const pl = findPlace([e.area, e.city, e.hospital].filter(Boolean).join(" "));
+      setPlace({ state: pl?.state ?? DEFAULT_PLACE.state, city: pl?.city ?? DEFAULT_PLACE.city, locality: e.area ?? "" });
       setF(next); setFingerprint(j.fingerprint);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Couldn't read it. You can type the details instead.");
@@ -53,7 +58,8 @@ export default function NeedForm() {
     if (!f) return;
     setPosting(true); setErr(null);
     try {
-      const [area, city] = f.area.split(",").map((s) => s.trim());
+      const area = place.locality.trim();
+      const city = place.city;
       const res = await fetch("/api/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, area: area || null, city: city || null, fingerprint }) });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error);
@@ -123,7 +129,7 @@ export default function NeedForm() {
               <li className="flex gap-3 items-start"><span className="h-6 w-6 shrink-0 rounded-full bg-rakt text-white text-xs font-bold flex items-center justify-center">2</span>{t("AI reads the patient name, hospital and blood group")}</li>
               <li className="flex gap-3 items-start"><span className="h-6 w-6 shrink-0 rounded-full bg-rakt text-white text-xs font-bold flex items-center justify-center">3</span>{t("Check the details and press")} <b>{t("Post")}</b></li>
             </ol>
-            <button className="text-sm text-muted underline mt-6" onClick={() => { setF(EMPTY); setFound(new Set()); }}>{t("No screenshot? Type the details instead")}</button>
+            <button className="btn w-full mt-6 !py-4 text-base border-2 border-rakt bg-rakt/10 text-ink hover:bg-rakt hover:text-white font-semibold" onClick={() => { setF(EMPTY); setPlace(DEFAULT_PLACE); setFound(new Set()); }}><Keyboard className="ic" /> {t("No screenshot? Type the details instead")}</button>
           </>
         )}
         {reading && (
@@ -148,8 +154,8 @@ export default function NeedForm() {
               </label>
               <Field label="Units needed" k="units" f={f} setF={setF} found={found} type="number" />
               <Field label="Hospital" k="hospital" f={f} setF={setF} found={found} wide />
-              <Field label="Area, city" k="area" f={f} setF={setF} found={found} />
               <Field label="Contact number" k="contact" f={f} setF={setF} found={found} />
+              <div className="col-span-2"><PlacePicker value={place} onChange={setPlace} localityLabel="Hospital area" highlight={found.has("area")} /></div>
             </div>
             <button className="btn btn-primary w-full mt-6 !py-4 text-lg" disabled={posting || !f.patient || !f.bloodGroup || !f.hospital} onClick={post}>
               {posting ? t("Posting…") : <><Droplet className="ic" /> {t("Post request and alert donors")}</>}
