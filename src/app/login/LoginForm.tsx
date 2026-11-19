@@ -43,7 +43,7 @@ export default function LoginForm() {
         <form className="mt-6 space-y-3" onSubmit={async (e) => { e.preventDefault(); const j = await post("/api/auth/verify", { contact, code }); if (j) { if (j.needsProfile) setStep("profile"); else { router.push(next); router.refresh(); } } }}>
           <p className="text-sm text-muted">Enter the 6-digit code sent to <b className="text-ink">{contact}</b>.</p>
           {demo && (
-            <div className="rounded-2xl bg-[#fff7e6] border border-[#f5d48a] p-3 text-sm">
+            <div className="rounded-md bg-[#fff7e6] border border-[#f5d48a] p-3 text-sm">
               <b>Prototype mode:</b> {channel === "phone" ? "SMS delivery needs a DLT-registered sender in India, so" : "email delivery isn't configured, so"} your code is shown here: <span className="font-mono font-bold text-lg tracking-widest">{demo}</span>
             </div>
           )}
@@ -58,7 +58,7 @@ export default function LoginForm() {
           <input className="input" placeholder="Full name" value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} />
           <div className="grid grid-cols-2 gap-2">
             {[["donor", "🩸 I want to donate"], ["family", "🏥 I need blood"]].map(([v, l]) => (
-              <button type="button" key={v} onClick={() => setP({ ...p, role: v })} className={`rounded-2xl border p-3 text-sm font-medium ${p.role === v ? "border-rakt bg-rakt/5" : "border-line bg-white"}`}>{l}</button>
+              <button type="button" key={v} onClick={() => setP({ ...p, role: v })} className={`rounded-md border p-3 text-sm font-medium ${p.role === v ? "border-rakt bg-rakt/5" : "border-line bg-white"}`}>{l}</button>
             ))}
           </div>
           <div className="grid grid-cols-4 gap-2">

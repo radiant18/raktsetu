@@ -64,6 +64,13 @@ export async function extractFromImage(base64: string, mediaType: string): Promi
   ]);
 }
 
+export async function extractFromPatientDetails(base64: string, mediaType: string): Promise<Extracted> {
+  return run([
+    { type: "image", source: { type: "base64", media_type: mediaType as "image/png", data: base64 } },
+    { type: "text", text: "This image shows a patient's details: it may be a hospital blood requisition form, a doctor's note, a patient file, a lab report or a WhatsApp message. The family is asking for blood right now, so postedOn is today. Extract the patient name, blood group needed, units, hospital, area, city and the family's contact number. Treat it as a blood request even if it is a form, and set isBloodRequest true if a patient and blood group are present." },
+  ]);
+}
+
 export async function extractFromSpeech(transcript: string, lang: string): Promise<Extracted> {
   return run([{ type: "text", text: `Voice note transcript (spoken language: ${lang}). A family member is asking for blood right now, so postedOn is today:\n\n"${transcript}"` }]);
 }

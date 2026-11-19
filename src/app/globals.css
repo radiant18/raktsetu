@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
+/* Neozen-inspired: calm monochrome, wide display type, hairline structure, one loud red. */
 :root {
-  --rakt: #c8102e;
-  --rakt-deep: #8a0b20;
-  --ink: #140a0c;
-  --paper: #fbf7f3;
-  --mist: #f3ece6;
-  --line: #e8ddd5;
-  --muted: #6f5f5c;
-  --pulse: #19c39a;
+  --rakt: #e0112b;
+  --rakt-deep: #a80a1f;
+  --ink: #0e0e0e;
+  --paper: #efefed;
+  --mist: #e5e5e2;
+  --line: #d6d6d2;
+  --muted: #6b6b68;
+  --pulse: #13a37b;
 }
 
 @theme inline {
@@ -26,24 +27,35 @@
 
 html { scroll-behavior: smooth; }
 body {
-  background: var(--paper);
+  background-color: var(--paper);
+  /* faint structural grid, like a layout sheet */
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,.035) 1px, transparent 1px);
+  background-size: 96px 96px;
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-.font-display { font-family: var(--font-display), Georgia, serif; letter-spacing: -0.01em; }
-.card { background: #fff; border: 1px solid var(--line); border-radius: 20px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: 999px; font-weight: 600; padding: .8rem 1.4rem; transition: transform .15s ease, background .15s ease, box-shadow .15s ease; }
+.font-display { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; letter-spacing: -0.045em; line-height: 1.02; }
+.wordmark { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -0.06em; text-transform: uppercase; line-height: .8; }
+.label { display: inline-flex; align-items: center; gap: .5rem; font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); font-weight: 500; }
+.label::before { content: "//"; color: var(--rakt); font-weight: 700; letter-spacing: 0; }
+.hair { border-color: var(--line); border-style: dashed; }
+
+.card { background: #fafaf8; border: 1px solid var(--line); border-radius: 6px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: 8px; font-weight: 600; padding: .8rem 1.4rem; transition: transform .15s ease, background .15s ease, box-shadow .15s ease; }
 .btn:active { transform: scale(.98); }
-.btn-primary { background: var(--rakt); color: #fff; box-shadow: 0 8px 24px -10px rgba(200,16,46,.7); }
+.btn-primary { background: var(--rakt); color: #fff; }
 .btn-primary:hover { background: var(--rakt-deep); }
-.btn-ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
-.btn-ghost:hover { background: var(--mist); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.btn-ghost:hover { background: var(--ink); color: #fff; }
 .btn-dark { background: var(--ink); color: #fff; }
-.btn:disabled { opacity: .5; pointer-events: none; }
-.input { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: .8rem 1rem; outline: none; }
-.input:focus { border-color: var(--rakt); box-shadow: 0 0 0 4px rgba(200,16,46,.12); }
+.btn-dark:hover { background: #2a2a2a; }
+.btn:disabled { opacity: .45; pointer-events: none; }
+.input { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: .8rem 1rem; outline: none; }
+.input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(224,17,43,.15); }
 .chip { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .7rem; font-size: .78rem; font-weight: 600; }
 
 @keyframes beat { 0%,100% { transform: scale(1) } 15% { transform: scale(1.12) } 30% { transform: scale(1) } 45% { transform: scale(1.08) } }
@@ -55,4 +67,4 @@ body {
 .scanline { position: absolute; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--rakt), transparent); box-shadow: 0 0 18px var(--rakt); animation: scan 1.4s ease-in-out infinite alternate; }
 @keyframes rise { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
 .rise { animation: rise .5s ease both; }
-.leaflet-container { font-family: inherit; border-radius: 16px; }
+.leaflet-container { font-family: inherit; border-radius: 6px; }

@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { BloodRequest } from "@/lib/types";
 import { speak } from "@/lib/speak";
 
-const DonorMap = dynamic(() => import("@/components/DonorMap"), { ssr: false, loading: () => <div className="h-[380px] rounded-2xl bg-mist animate-pulse" /> });
+const DonorMap = dynamic(() => import("@/components/DonorMap"), { ssr: false, loading: () => <div className="h-[380px] rounded-md bg-mist animate-pulse" /> });
 
 type Acc = BloodRequest["acceptances"][number] & { trust: number; trustLabel: string; group: string };
 interface Props {
@@ -88,7 +88,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
       <section className="card p-6 md:p-8">
         <p className="font-semibold">{label}{r.verified && " · 🧾 confirmed by blood bank slip"}</p>
         <div className="mt-4 flex items-center gap-5">
-          <div className={`shrink-0 h-24 w-24 md:h-28 md:w-28 rounded-3xl ${r.status === "active" ? "bg-rakt" : "bg-ink"} text-white flex flex-col items-center justify-center`}>
+          <div className={`shrink-0 h-24 w-24 md:h-28 md:w-28 rounded-md ${r.status === "active" ? "bg-rakt" : "bg-ink"} text-white flex flex-col items-center justify-center`}>
             <span className="text-4xl font-bold">{r.bloodGroup ?? "?"}</span>
             <span className="text-[10px] uppercase tracking-widest opacity-80">blood</span>
           </div>
@@ -103,20 +103,20 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
           <div className="mt-2 h-3 rounded-full bg-mist overflow-hidden"><div className="h-full bg-rakt rounded-full transition-all" style={{ width: `${pct}%` }} /></div>
         </div>
         {r.scamFlags.length > 0 && r.status === "active" && (
-          <div className="mt-5 rounded-2xl bg-[#fff7e6] border border-[#f5d48a] p-4 text-sm">
+          <div className="mt-5 rounded-md bg-[#fff7e6] border border-[#f5d48a] p-4 text-sm">
             <p className="font-semibold">⚠️ Please double-check before you go</p>
             <ul className="mt-1 space-y-0.5">{r.scamFlags.map((s) => <li key={s}>• {s}</li>)}</ul>
           </div>
         )}
         {r.status === "fulfilled" && (
-          <div className="mt-5 rounded-2xl bg-ink text-white p-5">
+          <div className="mt-5 rounded-md bg-ink text-white p-5">
             <p className="font-display text-3xl">The patient got the blood. Please stop forwarding.</p>
             {r.closureNote && <p className="text-white/70 text-sm mt-1">{r.closureNote}</p>}
           </div>
         )}
       </section>
 
-      {msg && <div className={`rise mt-4 rounded-2xl p-4 ${msg.ok ? "bg-[#eafaf4] border border-[#9fe3cb]" : "bg-[#fdecef] border border-[#f3b3be]"}`}>{msg.text}</div>}
+      {msg && <div className={`rise mt-4 rounded-md p-4 ${msg.ok ? "bg-[#eafaf4] border border-[#9fe3cb]" : "bg-[#fdecef] border border-[#f3b3be]"}`}>{msg.text}</div>}
 
       {/* 2. What should YOU do? */}
       <div className="mt-6 grid lg:grid-cols-2 gap-6 items-start">
@@ -135,7 +135,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
                 ) : (
                   <div className="space-y-2">
                     {r.acceptances.map((a) => (
-                      <div key={a.donorId + a.acceptedAt} className="flex items-center justify-between gap-3 rounded-2xl border border-line p-3">
+                      <div key={a.donorId + a.acceptedAt} className="flex items-center justify-between gap-3 rounded-md border border-line p-3">
                         <div>
                           <p className="font-semibold">{a.donorName} <span className="text-muted font-normal">· {a.group}</span></p>
                           <p className="text-xs text-muted">⭐ trust {a.trust} ({a.trustLabel})</p>
@@ -261,7 +261,7 @@ function Step({ n, title, children }: { n: string; title: string; children?: Rea
 function CloseBox({ busy, onClose }: { busy: boolean; onClose: (fd: FormData) => void }) {
   const [file, setFile] = useState<File | null>(null);
   return (
-    <div className="rounded-2xl bg-mist p-4">
+    <div className="rounded-md bg-mist p-4">
       <p className="text-sm text-muted">Take a photo of the slip the blood bank gave you. We read it and mark this request as done everywhere.</p>
       <label className="btn btn-ghost text-sm mt-3 cursor-pointer">
         📎 {file ? file.name : "Choose slip photo"}
