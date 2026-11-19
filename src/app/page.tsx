@@ -11,98 +11,82 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Hero */}
+      {/* Hero: one sentence + three clear choices */}
       <section className="relative overflow-hidden">
         <div className="absolute -top-40 -right-40 h-[520px] w-[520px] rounded-full bg-rakt/10 blur-3xl" />
-        <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 md:pt-24 relative">
+        <div className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 relative">
           <div className="inline-flex items-center gap-2 chip bg-white border border-line text-muted">
             <span className="relative inline-flex h-2 w-2"><span className="ripple absolute inset-0 rounded-full" /><span className="relative h-2 w-2 rounded-full bg-rakt" /></span>
-            {live} live requests · {donors} verified donors in Bengaluru
+            {live} people need blood right now · {donors} donors ready in Bengaluru
           </div>
-          <h1 className="font-display text-[44px] leading-[1.02] md:text-[84px] mt-6 max-w-4xl">
-            Every blood forward, <span className="italic text-rakt">verified</span> in seconds.
+          <h1 className="font-display text-[42px] leading-[1.05] md:text-[72px] mt-5 max-w-4xl">
+            Find blood fast. <span className="italic text-rakt">Stop fake forwards.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted leading-relaxed">
-            India finds emergency blood through WhatsApp forwards that never die. RaktSetu turns any forwarded screenshot into a live, verified request — matched only to compatible donors nearby — and kills the forward the moment the patient is safe.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#check" className="btn btn-primary">Check a forward</a>
-            <Link href="/voice" className="btn btn-ghost">🎙️ Need blood? Just speak</Link>
+          <p className="mt-4 max-w-2xl text-lg text-muted">Send us a screenshot of any blood request message. We tell you if it&apos;s real, and send it only to donors who can actually help.</p>
+
+          <div className="mt-8 grid md:grid-cols-3 gap-4">
+            <Choice href="#check" icon="📸" title="Check a message" text="Got a blood request on WhatsApp? Upload the screenshot. We tell you if it's still needed, already done, or a scam." cta="Check it" primary />
+            <Choice href="/need" icon="🏥" title="I need blood" text="Post your request with a screenshot or your voice. Matching donors nearby get an alert." cta="Ask for blood" />
+            <Choice href="/live" icon="🩸" title="I want to donate" text="See who needs your blood group near you. Say yes, go to the hospital, save a life." cta="Help someone" />
           </div>
         </div>
       </section>
 
       {/* Checker */}
-      <section id="check" className="mx-auto max-w-6xl px-5 scroll-mt-24">
+      <section id="check" className="mx-auto max-w-6xl px-4 scroll-mt-28">
+        <h2 className="font-display text-4xl md:text-5xl">📸 Check a blood request message</h2>
+        <p className="text-muted mt-2 mb-5">Upload, drag, or paste (Ctrl/⌘ + V) a screenshot. Takes about 5 seconds.</p>
         <Checker />
       </section>
 
-      {/* Problem */}
-      <section className="mx-auto max-w-6xl px-5 mt-24">
-        <p className="text-xs uppercase tracking-[.25em] text-muted">The jugaad we&apos;re replacing</p>
-        <h2 className="font-display text-4xl md:text-5xl mt-3 max-w-3xl">A forward has no expiry date, no owner and no off switch.</h2>
-        <div className="mt-10 grid md:grid-cols-3 gap-4">
-          {[
-            ["🧟", "Forwards that never die", "A request met on Monday is still circulating weeks later. Donors travel for a patient who no longer needs them."],
-            ["📵", "300 calls at 3 AM", "The family is in the ICU, and their number is on every group in the city."],
-            ["🎯", "The wrong 500 people", "An O− request reaches hundreds who can't donate, while the right donor 2 km away never sees it."],
-            ["💸", "Scams in the panic", "Fake requests ask for 'processing fees' over UPI from desperate people."],
-            ["🤷", "Nobody knows the status", "Is it still needed? How many units are left? Who is already on the way?"],
-            ["🚫", "No accountability", "Anyone can say 'I'm coming' and never show up. Nothing happens."],
-          ].map(([i, t, d]) => (
-            <div key={t} className="card p-6">
-              <div className="text-2xl">{i}</div>
-              <h3 className="font-semibold mt-3">{t}</h3>
-              <p className="text-sm text-muted mt-1 leading-relaxed">{d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How */}
-      <section className="mx-auto max-w-6xl px-5 mt-24">
-        <div className="rounded-[28px] bg-ink text-white p-8 md:p-12">
-          <p className="text-xs uppercase tracking-[.25em] text-white/50">How RaktSetu works</p>
-          <h2 className="font-display text-4xl md:text-5xl mt-3">People keep screenshotting. We make the screenshot do the work.</h2>
-          <div className="mt-10 grid md:grid-cols-4 gap-6">
+      {/* How it works, in 3 plain steps */}
+      <section className="mx-auto max-w-6xl px-4 mt-20">
+        <div className="rounded-[28px] bg-ink text-white p-7 md:p-12">
+          <h2 className="font-display text-4xl md:text-5xl">How it works</h2>
+          <div className="mt-8 grid md:grid-cols-3 gap-8">
             {[
-              ["01", "Screenshot in", "Any forward, any language. AI reads blood group, units, hospital, patient, contact and date."],
-              ["02", "Verified", "Duplicates merge into one request. Old forwards expire. Money requests get flagged."],
-              ["03", "Matched", "Only compatible, eligible donors within 15 km are alerted — in their own language."],
-              ["04", "Closed with proof", "The blood bank slip screenshot closes the request. Every copy of the forward now says FULFILLED."],
+              ["1", "Upload the screenshot", "The same message people forward on WhatsApp. Any language. AI reads the blood group, hospital, units and date."],
+              ["2", "We check it", "Same request twice? Merged. Too old? Marked old. Asks for money? Marked as a scam."],
+              ["3", "The right donors come", "Only donors with a matching blood group within 15 km get an alert, in their language. When the blood is arranged, every copy says DONE."],
             ].map(([n, t, d]) => (
-              <div key={n}>
-                <p className="font-display text-5xl text-rakt">{n}</p>
-                <h3 className="font-semibold mt-2">{t}</h3>
-                <p className="text-sm text-white/60 mt-1 leading-relaxed">{d}</p>
+              <div key={n} className="flex gap-4">
+                <span className="shrink-0 h-12 w-12 rounded-full bg-rakt flex items-center justify-center font-bold text-xl">{n}</span>
+                <div>
+                  <h3 className="font-semibold text-lg">{t}</h3>
+                  <p className="text-sm text-white/70 mt-1 leading-relaxed">{d}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Trust */}
-      <section className="mx-auto max-w-6xl px-5 mt-24 grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <p className="text-xs uppercase tracking-[.25em] text-muted">Built for trust</p>
-          <h2 className="font-display text-4xl md:text-5xl mt-3">No fake donors. No ghost promises.</h2>
-          <p className="text-muted mt-4 leading-relaxed">Every donor and family is verified with a one-time code. Donors who accept get an arrival code that only the family holds — so we know who really showed up.</p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+      {/* Safety, short */}
+      <section className="mx-auto max-w-6xl px-4 mt-16">
+        <h2 className="font-display text-4xl">Why you can trust it</h2>
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           {[
-            ["🔐", "OTP-verified accounts"],
-            ["🔢", "Arrival code at the hospital"],
-            ["⭐", "Trust score per donor"],
-            ["⏱️", "Auto-release after 2 hours"],
-            ["☝️", "One active promise at a time"],
-            ["🩸", "90-day donation gap enforced"],
-            ["🚩", "3 reports hide a request"],
-            ["🧾", "Verified close with bank slip"],
+            ["🔐", "Everyone signs in with a phone code"],
+            ["🔢", "Donors confirm arrival with a code from the family"],
+            ["⭐", "Donors who don't show up lose trust"],
+            ["🧾", "Requests close only with a blood bank slip"],
           ].map(([i, t]) => (
-            <div key={t} className="card p-4 flex items-center gap-3"><span className="text-xl">{i}</span><span className="font-medium">{t}</span></div>
+            <div key={t} className="card p-4 flex items-center gap-3"><span className="text-2xl">{i}</span><span className="font-medium">{t}</span></div>
           ))}
         </div>
+        <p className="text-sm text-muted mt-4"><Link href="/impact" className="underline">See our impact so far →</Link></p>
       </section>
     </main>
+  );
+}
+
+function Choice({ href, icon, title, text, cta, primary }: { href: string; icon: string; title: string; text: string; cta: string; primary?: boolean }) {
+  return (
+    <Link href={href} className={`card p-6 flex flex-col hover:shadow-xl hover:-translate-y-0.5 transition ${primary ? "ring-2 ring-rakt" : ""}`}>
+      <span className="text-4xl">{icon}</span>
+      <h3 className="font-display text-3xl mt-3">{title}</h3>
+      <p className="text-sm text-muted mt-2 flex-1 leading-relaxed">{text}</p>
+      <span className={`btn mt-5 ${primary ? "btn-primary" : "btn-dark"}`}>{cta} →</span>
+    </Link>
   );
 }

@@ -7,14 +7,14 @@ type Verdict = "created" | "active" | "duplicate" | "stale" | "fulfilled" | "fla
 interface Result { verdict: Verdict; request: BloodRequest | null; extracted: Extracted; reasons: string[] }
 
 const LOOK: Record<Verdict, { tone: string; dot: string; title: string; sub: string }> = {
-  created: { tone: "bg-[#eafaf4] border-[#9fe3cb]", dot: "bg-pulse", title: "Live now", sub: "This request is new. RaktSetu is matching compatible donors nearby." },
-  active: { tone: "bg-[#eafaf4] border-[#9fe3cb]", dot: "bg-pulse", title: "Still needed", sub: "This request is active." },
-  unverified: { tone: "bg-[#fff7e6] border-[#f5d48a]", dot: "bg-[#e0a100]", title: "Live, but unverified", sub: "Some details are missing. Call before you travel." },
-  duplicate: { tone: "bg-[#eef3ff] border-[#b9cbf5]", dot: "bg-[#3b6fe0]", title: "Already live — merged", sub: "This is the same request as one already on RaktSetu." },
-  stale: { tone: "bg-[#f4f1ef] border-line", dot: "bg-muted", title: "Old forward", sub: "This is probably no longer needed." },
-  fulfilled: { tone: "bg-[#fdecef] border-[#f3b3be]", dot: "bg-rakt", title: "FULFILLED — stop forwarding", sub: "This patient already got blood." },
-  flagged: { tone: "bg-[#fdecef] border-[#f3b3be]", dot: "bg-rakt", title: "Warning: possible scam", sub: "Do not send money to anyone for blood." },
-  not_a_request: { tone: "bg-[#f4f1ef] border-line", dot: "bg-muted", title: "Not a blood request", sub: "We couldn't find a blood request in this image." },
+  created: { tone: "bg-[#eafaf4] border-[#9fe3cb]", dot: "bg-pulse", title: "✅ Real request, now live", sub: "We are alerting donors with a matching blood group nearby. Open it to see who is coming." },
+  active: { tone: "bg-[#eafaf4] border-[#9fe3cb]", dot: "bg-pulse", title: "✅ Still needed", sub: "This request is active. If you can donate, open it and say yes." },
+  unverified: { tone: "bg-[#fff7e6] border-[#f5d48a]", dot: "bg-[#e0a100]", title: "⚠️ Live, but please double-check", sub: "Something looks off (see below). Call the number before you go." },
+  duplicate: { tone: "bg-[#eef3ff] border-[#b9cbf5]", dot: "bg-[#3b6fe0]", title: "🔁 Already posted", sub: "Someone already shared this same request. We joined them into one, so donors don't get it twice." },
+  stale: { tone: "bg-[#f4f1ef] border-line", dot: "bg-muted", title: "⌛ Old message", sub: "This is more than 5 days old. It is probably not needed any more. Please don't forward it." },
+  fulfilled: { tone: "bg-[#fdecef] border-[#f3b3be]", dot: "bg-rakt", title: "🛑 Already done. Stop forwarding.", sub: "This patient already got the blood. Forwarding it now only wastes donors' time." },
+  flagged: { tone: "bg-[#fdecef] border-[#f3b3be]", dot: "bg-rakt", title: "🚨 Possible scam", sub: "Real blood requests never ask for money. Do not pay anyone." },
+  not_a_request: { tone: "bg-[#f4f1ef] border-line", dot: "bg-muted", title: "🤔 Not a blood request", sub: "We couldn't find a blood request in this picture. Try a clearer screenshot." },
 };
 
 export default function Checker() {
@@ -82,8 +82,8 @@ export default function Checker() {
         ) : (
           <div className="text-center p-8">
             <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-mist flex items-center justify-center text-2xl">📸</div>
-            <p className="font-semibold">Drop the forwarded screenshot here</p>
-            <p className="text-sm text-muted mt-1">or tap to choose · or paste with Ctrl/⌘ + V</p>
+            <p className="text-xs uppercase tracking-[.2em] text-muted mb-1">Step 1</p><p className="font-semibold">Tap here to add the screenshot</p>
+            <p className="text-sm text-muted mt-1">or drag it here · or paste with Ctrl/⌘ + V</p>
             <p className="text-xs text-muted mt-4">Posters, WhatsApp chats, Instagram stories — any language</p>
           </div>
         )}
@@ -93,12 +93,12 @@ export default function Checker() {
         {!result && (
           <div className="card p-6 flex-1 flex flex-col justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[.2em] text-muted">Forward check</p>
-              <h3 className="font-display text-3xl mt-2">Is this request still real?</h3>
-              <p className="text-muted mt-2 text-sm leading-relaxed">RaktSetu reads the screenshot, finds the blood group, hospital and date, then tells you in seconds whether it&apos;s live, a duplicate, already fulfilled, too old — or a scam.</p>
+              <p className="text-xs uppercase tracking-[.2em] text-muted">Step 2</p>
+              <h3 className="font-display text-3xl mt-2">Press the button to check</h3>
+              <p className="text-muted mt-2 text-sm leading-relaxed">We read the blood group, hospital and date from the picture and tell you: is it real and still needed, already posted, already done, too old, or a scam?</p>
             </div>
             <button onClick={run} disabled={!file || busy} className="btn btn-primary mt-6 w-full">
-              {busy ? "Reading screenshot…" : file ? "Check this forward" : "Add a screenshot first"}
+              {busy ? "Reading screenshot…" : file ? "Check this message" : "Step 1: add a screenshot (left)"}
             </button>
             {error && <p className="text-sm text-rakt mt-3">{error}</p>}
           </div>
@@ -108,7 +108,7 @@ export default function Checker() {
           <div className={`rise rounded-[20px] border p-6 ${look.tone}`}>
             <div className="flex items-center gap-2">
               <span className={`h-3 w-3 rounded-full ${look.dot}`} />
-              <p className="text-xs uppercase tracking-[.2em] font-semibold">Verdict</p>
+              <p className="text-xs uppercase tracking-[.2em] font-semibold">Result</p>
             </div>
             <h3 className="font-display text-4xl mt-2 leading-tight">{look.title}</h3>
             <p className="mt-1 text-sm">{look.sub}</p>
@@ -119,13 +119,13 @@ export default function Checker() {
               <div className="mt-5 grid grid-cols-3 gap-2 text-center">
                 <Fact k="Blood" v={x.bloodGroup ?? "?"} big />
                 <Fact k="Units" v={String(x.units)} big />
-                <Fact k="Posted" v={x.postedOn ?? "unknown"} />
+                <Fact k="Date" v={x.postedOn ?? "unknown"} />
                 <Fact k="Hospital" v={x.hospital ?? "—"} wide />
                 <Fact k="Patient" v={x.patient ?? "—"} />
               </div>
             )}
             <div className="mt-5 flex flex-wrap gap-2">
-              {r && <Link href={`/r/${r.id}`} className="btn btn-dark">Open live request →</Link>}
+              {r && <Link href={`/r/${r.id}`} className="btn btn-dark">Open this request →</Link>}
               <button onClick={() => { setResult(null); setFile(null); setPreview(null); }} className="btn btn-ghost">Check another</button>
             </div>
           </div>
