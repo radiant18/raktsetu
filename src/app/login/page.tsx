@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import LoginForm from "./LoginForm";
 import { DropScene } from "@/components/Motion";
+import { getT } from "@/lib/lang-server";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getT();
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
       <div className="grid lg:grid-cols-[1fr_1.05fr] gap-6 items-stretch">
@@ -11,12 +13,12 @@ export default function LoginPage() {
           <DropScene />
           <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(0,0,0,.75),transparent_35%,transparent_60%,rgba(0,0,0,.7))]" />
           <div className="relative pointer-events-none">
-            <p className="label !text-white/70">Verified accounts only</p>
-            <h2 className="font-display text-4xl mt-4 text-white">Every donor is real.<br /><span className="text-rakt">Every family is real.</span></h2>
+            <p className="label !text-white/70">{t("Verified accounts only")}</p>
+            <h2 className="font-display text-4xl mt-4 text-white">{t("Every donor is real.")}<br /><span className="text-rakt">{t("Every family is real.")}</span></h2>
           </div>
           <ul className="relative pointer-events-none space-y-3 text-sm text-white/85">
-            {["🔐 One phone code. No passwords.", "🩸 Only matching donors see your request", "🔢 Arrival codes stop fake promises"].map((t) => (
-              <li key={t} className="rounded-2xl bg-black/40 backdrop-blur border border-white/10 px-4 py-3">{t}</li>
+            {["🔐 One phone code. No passwords.", "🩸 Only matching donors see your request", "🔢 Arrival codes stop fake promises"].map((x) => (
+              <li key={x} className="rounded-2xl bg-black/40 backdrop-blur border border-white/10 px-4 py-3">{t(x)}</li>
             ))}
           </ul>
         </div>

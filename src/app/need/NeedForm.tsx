@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useT } from "@/components/Lang";
 import type { BloodRequest, Extracted } from "@/lib/types";
 
 const GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -8,6 +9,7 @@ type Fields = { patient: string; bloodGroup: string; units: string; hospital: st
 const EMPTY: Fields = { patient: "", bloodGroup: "", units: "1", hospital: "", area: "", contact: "", component: "Whole blood" };
 
 export default function NeedForm() {
+  const t = useT();
   const [preview, setPreview] = useState<string | null>(null);
   const [reading, setReading] = useState(false);
   const [f, setF] = useState<Fields | null>(null);
@@ -69,16 +71,16 @@ export default function NeedForm() {
           <h2 className="font-display text-4xl md:text-5xl mt-2">{r.units} unit{r.units > 1 ? "s" : ""} of {r.bloodGroup} for {r.patient}</h2>
           <p className="text-muted mt-1">{r.hospital}{r.area ? `, ${r.area}` : ""}</p>
           <ul className="mt-5 space-y-2 text-sm">
-            {dup ? <li>✅ Someone already posted this. We joined them, so donors don&apos;t get it twice.</li> : <>
-              <li>✅ Matching donors within 15 km got an alert in their language</li>
-              <li>✅ A poster with a QR code is ready (right)</li>
-              <li>✅ When you get the blood, upload the bank slip and every copy says DONE</li>
+            {dup ? <li>{t("✅ Someone already posted this. We joined them, so donors don't get it twice.")}</li> : <>
+              <li>{t("✅ Matching donors within 15 km got an alert in their language")}</li>
+              <li>{t("✅ A poster with a QR code is ready (right)")}</li>
+              <li>{t("✅ When you get the blood, upload the bank slip and every copy says DONE")}</li>
             </>}
           </ul>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Link href={`/r/${r.id}`} className="btn btn-primary">Open my request →</Link>
-            <a className="btn btn-dark" target="_blank" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed for ${r.patient} at ${r.hospital}. Live status: ${url}`)}`}>💬 Share on WhatsApp</a>
-            <a href={`/r/${r.id}/poster`} download={`raktsetu-${r.bloodGroup}.png`} className="btn btn-ghost">⬇ Poster</a>
+            <Link href={`/r/${r.id}`} className="btn btn-primary">{t("Open my request →")}</Link>
+            <a className="btn btn-dark" target="_blank" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed for ${r.patient} at ${r.hospital}. Live status: ${url}`)}`}>{t("💬 Share on WhatsApp")}</a>
+            <a href={`/r/${r.id}/poster`} download={`raktsetu-${r.bloodGroup}.png`} className="btn btn-ghost">{t("⬇ Poster")}</a>
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -102,9 +104,9 @@ export default function NeedForm() {
         ) : (
           <div className="text-center p-8">
             <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-rakt/10 flex items-center justify-center text-3xl">📸</div>
-            <p className="font-semibold text-lg">Add a screenshot of the patient details</p>
-            <p className="text-sm text-muted mt-1">Hospital form, doctor&apos;s note, patient file or a WhatsApp message</p>
-            <p className="text-xs text-muted mt-3">Tap to choose · drag it here · or paste (Ctrl/⌘ + V)</p>
+            <p className="font-semibold text-lg">{t("Add a screenshot of the patient details")}</p>
+            <p className="text-sm text-muted mt-1">{t("Hospital form, doctor's note, patient file or a WhatsApp message")}</p>
+            <p className="text-xs text-muted mt-3">{t("Tap to choose · drag it here · or paste (Ctrl/⌘ + V)")}</p>
           </div>
         )}
       </div>
@@ -113,33 +115,33 @@ export default function NeedForm() {
       <div className="card p-6">
         {!f && !reading && (
           <>
-            <p className="text-xs uppercase tracking-[.2em] text-muted">How it works</p>
-            <h3 className="font-display text-3xl mt-2">AI fills the form for you</h3>
+            <p className="text-xs uppercase tracking-[.2em] text-muted">{t("How it works")}</p>
+            <h3 className="font-display text-3xl mt-2">{t("AI fills the form for you")}</h3>
             <ol className="mt-4 space-y-2 text-sm">
-              <li>1️⃣ Add the screenshot (left)</li>
-              <li>2️⃣ AI reads the patient name, hospital and blood group</li>
-              <li>3️⃣ Check the details and press <b>Post</b></li>
+              <li>{t("1️⃣ Add the screenshot (left)")}</li>
+              <li>{t("2️⃣ AI reads the patient name, hospital and blood group")}</li>
+              <li>{t("3️⃣ Check the details and press")} <b>{t("Post")}</b></li>
             </ol>
-            <button className="text-sm text-muted underline mt-6" onClick={() => { setF(EMPTY); setFound(new Set()); }}>No screenshot? Type the details instead</button>
+            <button className="text-sm text-muted underline mt-6" onClick={() => { setF(EMPTY); setFound(new Set()); }}>{t("No screenshot? Type the details instead")}</button>
           </>
         )}
         {reading && (
           <div className="py-16 text-center">
-            <p className="font-display text-3xl">Reading the screenshot…</p>
-            <p className="text-sm text-muted mt-2">Finding the patient name, hospital and blood group</p>
+            <p className="font-display text-3xl">{t("Reading the screenshot…")}</p>
+            <p className="text-sm text-muted mt-2">{t("Finding the patient name, hospital and blood group")}</p>
           </div>
         )}
         {f && !reading && (
           <>
-            <h3 className="font-display text-3xl">{found.size ? `✨ AI found ${found.size} details` : "Enter the details"}</h3>
-            <p className="text-sm text-muted mt-1">{found.size ? "Check them. Fix anything that's wrong, then press Post." : "Fill in what you know."}</p>
+            <h3 className="font-display text-3xl">{found.size ? `${t("✨ AI found")} ${found.size} ${t("details")}` : t("Enter the details")}</h3>
+            <p className="text-sm text-muted mt-1">{found.size ? t("Check them. Fix anything that's wrong, then press Post.") : t("Fill in what you know.")}</p>
             {err && <p className="text-sm text-rakt mt-2">{err}</p>}
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Field label="Patient name" k="patient" f={f} setF={setF} found={found} wide />
               <label className="block">
                 <span className="text-sm font-medium">Blood group {found.has("bloodGroup") && <Badge />}</span>
                 <select className="input mt-1" value={f.bloodGroup} onChange={(e) => setF({ ...f, bloodGroup: e.target.value })}>
-                  <option value="">Choose</option>
+                  <option value="">{t("Choose")}</option>
                   {GROUPS.map((g) => <option key={g}>{g}</option>)}
                 </select>
               </label>
@@ -149,9 +151,9 @@ export default function NeedForm() {
               <Field label="Contact number" k="contact" f={f} setF={setF} found={found} />
             </div>
             <button className="btn btn-primary w-full mt-6 !py-4 text-lg" disabled={posting || !f.patient || !f.bloodGroup || !f.hospital} onClick={post}>
-              {posting ? "Posting…" : "🩸 Post request and alert donors"}
+              {posting ? t("Posting…") : t("🩸 Post request and alert donors")}
             </button>
-            {(!f.patient || !f.bloodGroup || !f.hospital) && <p className="text-xs text-muted mt-2 text-center">Patient name, blood group and hospital are needed.</p>}
+            {(!f.patient || !f.bloodGroup || !f.hospital) && <p className="text-xs text-muted mt-2 text-center">{t("Patient name, blood group and hospital are needed.")}</p>}
           </>
         )}
         {err && !f && <p className="text-sm text-rakt mt-3">{err}</p>}
@@ -167,7 +169,7 @@ function Badge() {
 function Field({ label, k, f, setF, found, wide, type }: { label: string; k: keyof Fields; f: Fields; setF: (f: Fields) => void; found: Set<string>; wide?: boolean; type?: string }) {
   return (
     <label className={`block ${wide ? "col-span-2" : ""}`}>
-      <span className="text-sm font-medium">{label} {found.has(k) && <Badge />}</span>
+      <span className="text-sm font-medium">{useT()(label)} {found.has(k) && <Badge />}</span>
       <input className={`input mt-1 ${found.has(k) ? "!border-[#2fd39f]/40 !bg-[#2fd39f]/5" : ""}`} type={type ?? "text"} min={type === "number" ? 1 : undefined} value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
     </label>
   );
