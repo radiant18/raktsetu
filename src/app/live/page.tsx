@@ -5,7 +5,6 @@ import { currentUser } from "@/lib/auth";
 import { CAN_RECEIVE_FROM, eligibility, km } from "@/lib/blood";
 import type { BloodRequest } from "@/lib/types";
 import { getT } from "@/lib/lang-server";
-import WhatsAppCard from "@/components/WhatsAppCard";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +61,6 @@ export default async function Donate() {
           </div>
         </>
       )}
-      <div className="mt-12"><WhatsAppCard /></div>
     </main>
   );
 }

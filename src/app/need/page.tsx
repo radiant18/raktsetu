@@ -1,7 +1,6 @@
 import { Mic } from "lucide-react";
 import Link from "next/link";
 import NeedForm from "./NeedForm";
-import WhatsAppCard from "@/components/WhatsAppCard";
 import { currentUser } from "@/lib/auth";
 import { getT } from "@/lib/lang-server";
 
@@ -32,7 +31,6 @@ export default async function Need() {
           </div>
         </>
       )}
-      <div className="mt-12"><WhatsAppCard /></div>
     </main>
   );
 }

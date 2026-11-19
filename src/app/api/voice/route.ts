@@ -1,5 +1,5 @@
 import { after, NextResponse } from "next/server";
-import { notifyDonors } from "@/lib/whatsapp";
+import { notifyDonors, tellRequester } from "@/lib/whatsapp";
 import { currentUserId } from "@/lib/auth";
 import { extractFromSpeech } from "@/lib/ai";
 import { checkForward } from "@/lib/check";
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     e.postedOn = new Date().toISOString().slice(0, 10);
     if (!e.bloodGroup || !e.hospital) return NextResponse.json({ error: "Please mention the blood group and the hospital name.", extracted: e }, { status: 400 });
     const result = await mutate((db) => checkForward(db, e, null, { create: true, userId: uidv, source: "voice" }));
-    if (result.request && (result.verdict === "created" || result.verdict === "unverified")) { const id = result.request.id; after(() => notifyDonors(id).catch(console.error)); }
+    if (result.request && (result.verdict === "created" || result.verdict === "unverified")) { const id = result.request.id; after(async () => { const n = await notifyDonors(id).catch(() => 0); await tellRequester(id, n).catch(console.error); }); }
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : "Failed" }, { status: 500 });

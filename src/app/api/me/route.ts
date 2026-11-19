@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { welcomeMatches } from "@/lib/whatsapp";
 import { currentUserId } from "@/lib/auth";
 import { mutate } from "@/lib/db";
 import { normaliseGroup } from "@/lib/blood";
@@ -18,13 +19,16 @@ export async function PATCH(req: Request) {
   const state = (b.state ?? "").trim().slice(0, 60);
   const area = [locality, city].filter(Boolean).join(", ") || "Bengaluru";
   const [lat, lng] = await locate(null, locality || null, [city || "Bengaluru", state].filter(Boolean).join(", "));
+  let first = false;
   const user = await mutate((db) => {
     const u = db.users.find((x) => x.id === id);
     if (!u) return null;
+    first = !u.name;
     u.name = name; u.role = role; u.bloodGroup = group; u.area = area; u.lat = lat; u.lng = lng;
     u.language = b.language === "hi" || b.language === "kn" ? b.language : "en";
     return u;
   });
   if (!user) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+  if (first) after(() => welcomeMatches(id).catch(console.error));
   return NextResponse.json({ ok: true, user });
 }

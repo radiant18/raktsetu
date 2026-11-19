@@ -75,7 +75,11 @@ export interface DB {
   users: User[];
   otps: OtpEntry[];
   stats: { forwardsChecked: number; staleStopped: number; duplicatesMerged: number; scamsFlagged: number };
+  waOutbox?: WaMessage[];
 }
+
+/** A WhatsApp message waiting for the sender (Twilio, or the pywhatkit worker on a laptop). */
+export interface WaMessage { id: string; to: string; body: string; at: string; sentAt: string | null }
 
 export interface Extracted {
   isBloodRequest: boolean;
