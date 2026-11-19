@@ -1,3 +1,4 @@
+import { Droplet, KeyRound, ShieldCheck } from "lucide-react";
 import { Suspense } from "react";
 import LoginForm from "./LoginForm";
 import { DropScene } from "@/components/Motion";
@@ -17,8 +18,8 @@ export default async function LoginPage() {
             <h2 className="font-display text-4xl mt-4 text-white">{t("Every donor is real.")}<br /><span className="text-rakt">{t("Every family is real.")}</span></h2>
           </div>
           <ul className="relative pointer-events-none space-y-3 text-sm text-white/85">
-            {["🔐 One phone code. No passwords.", "🩸 Only matching donors see your request", "🔢 Arrival codes stop fake promises"].map((x) => (
-              <li key={x} className="rounded-2xl bg-black/40 backdrop-blur border border-white/10 px-4 py-3">{t(x)}</li>
+            {([[ShieldCheck, "One phone code. No passwords."], [Droplet, "Only matching donors see your request"], [KeyRound, "Arrival codes stop fake promises"]] as const).map(([Ic, x]) => (
+              <li key={x} className="rounded-2xl bg-black/40 backdrop-blur border border-white/10 px-4 py-3 flex items-center gap-3"><Ic className="h-4 w-4 text-rakt shrink-0" />{t(x)}</li>
             ))}
           </ul>
         </div>

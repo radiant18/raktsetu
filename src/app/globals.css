@@ -110,3 +110,6 @@ html[lang="hi"] .font-display, html[lang="hi"] .wordmark { font-family: var(--fo
 html[lang="kn"] .font-display, html[lang="kn"] .wordmark { font-family: var(--font-display), "Noto Sans Kannada", sans-serif; }
 html[lang="hi"] .font-display, html[lang="kn"] .font-display { letter-spacing: -0.01em; line-height: 1.3; }
 html[lang="hi"] h1.font-display, html[lang="kn"] h1.font-display { font-size: clamp(30px, 6vw, 54px); }
+
+/* Line icons sit on the text baseline like a glyph */
+.ic { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -0.17em; flex-shrink: 0; }

@@ -1,4 +1,5 @@
 "use client";
+import { Download, Mic, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
@@ -28,32 +29,60 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
     if (!(w.SpeechRecognition || w.webkitSpeechRecognition)) setSupported(false);
   }, []);
 
-  function toggle() {
-    if (listening) { rec.current?.stop(); return; }
+  // Push-to-talk: recording runs only while the button is held down.
+  const held = useRef(false);
+  const finalText = useRef("");
+
+  function start() {
+    if (held.current) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SR) return setSupported(false);
+    held.current = true;
+    finalText.current = text ? text.trim() + " " : "";
     const r = new SR();
     r.lang = lang;
     r.continuous = true;
     r.interimResults = true;
-    let finalText = text ? text + " " : "";
     r.onresult = (e: Rec) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) finalText += t + " "; else interim += t;
+        if (e.results[i].isFinal) finalText.current += t + " "; else interim += t;
       }
-      setText((finalText + interim).trim());
+      setText((finalText.current + interim).trim());
     };
-    r.onerror = (e: Rec) => { setErr(e.error === "not-allowed" ? "Microphone permission was blocked." : "Couldn't hear clearly. Try again or type it."); setListening(false); };
-    r.onend = () => setListening(false);
+    r.onerror = (e: Rec) => {
+      if (e.error === "no-speech" || e.error === "aborted") return; // silence while holding is fine
+      held.current = false;
+      setListening(false);
+      setErr(e.error === "not-allowed" ? "Microphone permission was blocked. Allow it in the address bar and try again." : "Couldn't hear clearly. Try again or type it.");
+    };
+    // Browsers end recognition after a pause; keep going while the button is still held.
+    r.onend = () => {
+      if (held.current) { try { r.start(); } catch { /* already restarting */ } }
+      else setListening(false);
+    };
     rec.current = r;
     setErr(null);
     setListening(true);
-    r.start();
+    try { r.start(); } catch { /* ignore double start */ }
   }
+
+  function stop() {
+    if (!held.current) return;
+    held.current = false;
+    try { rec.current?.stop(); } catch { /* not started yet */ }
+    setListening(false);
+  }
+
+  useEffect(() => {
+    const off = () => stop();
+    window.addEventListener("blur", off);
+    document.addEventListener("visibilitychange", off);
+    return () => { window.removeEventListener("blur", off); document.removeEventListener("visibilitychange", off); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submit() {
     setBusy(true); setErr(null);
@@ -76,7 +105,7 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
           <p className="text-sm mt-4">Share the <b>verified poster</b> instead of typing a forward. Its QR code always shows the live status — and it switches to <b>FULFILLED</b> the moment you close it, so it can never go stale.</p>
           <div className="mt-6 flex flex-wrap gap-2">
             <Link href={`/r/${made.id}`} className="btn btn-primary">Open control room →</Link>
-            <a href={`/r/${made.id}/poster`} download={`raktsetu-${made.bloodGroup}.png`} className="btn btn-ghost">⬇ Download poster</a>
+            <a href={`/r/${made.id}/poster`} download={`raktsetu-${made.bloodGroup}.png`} className="btn btn-ghost"><Download className="ic" /> Download poster</a>
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -94,11 +123,24 @@ export default function VoiceRequest({ signedIn }: { signedIn: boolean }) {
       </div>
 
       <div className="mt-10 flex flex-col items-center text-center">
-        <button onClick={toggle} disabled={!supported} className={`relative h-36 w-36 rounded-full flex items-center justify-center text-5xl text-white transition ${listening ? "bg-rakt scale-105" : "bg-[#1c1c1c] hover:bg-rakt"}`} aria-label={listening ? "Stop recording" : "Start recording"}>
+        <button
+          type="button"
+          disabled={!supported}
+          onPointerDown={(e) => { if (e.button !== 0) return; e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); start(); }}
+          onPointerUp={stop}
+          onPointerCancel={stop}
+          onLostPointerCapture={stop}
+          onKeyDown={(e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); start(); } }}
+          onKeyUp={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } }}
+          onContextMenu={(e) => e.preventDefault()}
+          style={{ touchAction: "none", userSelect: "none", WebkitUserSelect: "none" }}
+          className={`relative h-36 w-36 rounded-full flex items-center justify-center text-white transition select-none ${listening ? "bg-rakt scale-110 shadow-[0_0_0_10px_rgba(232,19,47,.18)]" : "bg-[#1c1c1c] hover:bg-[#2a0a0e] active:scale-95"}`}
+          aria-pressed={listening}
+          aria-label="Hold to talk">
           {listening && <span className="ripple absolute inset-0 rounded-full" />}
-          <span className="relative">{listening ? "■" : "🎙️"}</span>
+          <span className="relative">{listening ? <Square className="h-10 w-10 fill-current" /> : <Mic className="h-12 w-12" />}</span>
         </button>
-        <p className="mt-5 font-semibold">{listening ? "Listening… tap to stop" : "Tap and speak"}</p>
+        <p className="mt-5 font-semibold">{listening ? "Listening… release to stop" : "Hold to talk"}</p>
         <p className="text-sm text-muted mt-1 max-w-md">Say the blood group, how many units, the hospital and the patient&apos;s name. For example: <i>&ldquo;{LANGS.find((l) => l[0] === lang)?.[2]}&rdquo;</i></p>
         {!supported && <p className="text-sm text-rakt mt-3">Voice input needs Chrome or Edge. You can type below instead.</p>}
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import { Droplet, Hospital } from "lucide-react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BLOOD_GROUPS } from "@/lib/types";
@@ -65,7 +66,7 @@ export default function LoginForm() {
           <label className="block">
             <span className="text-sm font-medium">{t("Mobile number")}</span>
             <div className="mt-1 flex items-stretch rounded-[14px] border border-line bg-[var(--surface)] focus-within:border-ink focus-within:shadow-[0_0_0_3px_rgba(232,19,47,.2)] transition">
-              {!isEmail && <span className="pl-4 pr-3 flex items-center gap-1.5 whitespace-nowrap shrink-0 text-muted border-r border-line">🇮🇳 +91</span>}
+              {!isEmail && <span className="pl-4 pr-3 flex items-center gap-1.5 whitespace-nowrap shrink-0 text-muted border-r border-line">+91</span>}
               <input className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none text-lg tracking-wide" autoFocus inputMode={isEmail ? "email" : "tel"} value={contact} onChange={(e) => setContact(e.target.value)} placeholder="98450 12345" />
             </div>
             <span className="text-xs text-muted mt-1.5 block">{t("or type your email instead")}</span>
@@ -110,10 +111,10 @@ export default function LoginForm() {
           <div>
             <span className="text-sm font-medium">{t("I am here to…")}</span>
             <div className="mt-1 grid grid-cols-2 gap-3">
-              {([["donor", "🩸", "Donate blood", "Get alerts when someone near you needs your group"], ["family", "🏥", "Find blood", "Post a request for a patient"]] as const).map(([v, i, ti, d]) => (
+              {([["donor", Droplet, "Donate blood", "Get alerts when someone near you needs your group"], ["family", Hospital, "Find blood", "Post a request for a patient"]] as const).map(([v, Ic, ti, d]) => (
                 <button type="button" key={v} onClick={() => setP({ ...p, role: v })}
                   className={`text-left rounded-2xl border p-4 transition ${p.role === v ? "border-rakt bg-rakt/10 shadow-[0_0_0_3px_rgba(232,19,47,.2)]" : "border-line bg-[var(--surface)] hover:border-ink/50"}`}>
-                  <span className="text-2xl">{i}</span>
+                  <span className="h-10 w-10 rounded-xl bg-rakt/12 text-rakt flex items-center justify-center"><Ic className="h-5 w-5" /></span>
                   <p className="font-semibold mt-2">{t(ti)}</p>
                   <p className="text-xs text-muted mt-1 leading-snug">{t(d)}</p>
                 </button>

@@ -1,3 +1,4 @@
+import { Droplet, Hospital } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
@@ -21,11 +22,11 @@ export default async function Me() {
     <main className="mx-auto max-w-5xl px-5 py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[.2em] text-muted">{u.role === "donor" ? "🩸 Donor" : "🏥 Family"} · phone verified ✓</p>
+          <p className="text-xs uppercase tracking-[.2em] text-muted">{u.role === "donor" ? "Donor" : "Family"} · phone verified ✓</p>
           <h1 className="font-display text-5xl">{u.name}</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          {u.role === "donor" ? <Link href="/live" className="btn btn-primary">🩸 See who needs blood</Link> : <Link href="/need" className="btn btn-primary">🏥 Ask for blood</Link>}
+          {u.role === "donor" ? <Link href="/live" className="btn btn-primary"><Droplet className="ic" /> See who needs blood</Link> : <Link href="/need" className="btn btn-primary"><Hospital className="ic" /> Ask for blood</Link>}
           <Logout />
         </div>
       </div>
@@ -56,13 +57,13 @@ export default async function Me() {
         <div className="card p-6">
           <h2 className="font-semibold">Blood I asked for</h2>
           {mine.length === 0 ? <p className="text-sm text-muted mt-2">Nothing yet. <Link className="underline" href="/need">Ask for blood</Link>.</p> : (
-            <ul className="mt-3 space-y-2">{mine.map((r) => <li key={r.id}><Link className="flex justify-between rounded-xl border border-line p-3 hover:bg-mist" href={`/r/${r.id}`}><span><b>{r.bloodGroup}</b> · {r.hospital}</span><span className="text-sm text-muted">{r.status === "active" ? "still needed" : r.status === "fulfilled" ? "done ✅" : r.status}</span></Link></li>)}</ul>
+            <ul className="mt-3 space-y-2">{mine.map((r) => <li key={r.id}><Link className="flex justify-between rounded-xl border border-line p-3 hover:bg-mist" href={`/r/${r.id}`}><span><b>{r.bloodGroup}</b> · {r.hospital}</span><span className="text-sm text-muted">{r.status === "active" ? "still needed" : r.status === "fulfilled" ? "done" : r.status}</span></Link></li>)}</ul>
           )}
         </div>
         <div className="card p-6">
           <h2 className="font-semibold">Requests I said yes to</h2>
           {promises.length === 0 ? <p className="text-sm text-muted mt-2">None yet. <Link className="underline" href="/live">See who needs blood</Link>.</p> : (
-            <ul className="mt-3 space-y-2">{promises.map((r) => { const a = r.acceptances.find((x) => x.donorId === u.id)!; return <li key={r.id}><Link className="flex justify-between rounded-xl border border-line p-3 hover:bg-mist" href={`/r/${r.id}`}><span><b>{r.bloodGroup}</b> · {r.hospital}</span><span className="text-sm text-muted">{a.status === "on_the_way" ? "going" : a.status === "arrived" ? "donated ✅" : a.status === "no_show" ? "missed" : "cancelled"}</span></Link></li>; })}</ul>
+            <ul className="mt-3 space-y-2">{promises.map((r) => { const a = r.acceptances.find((x) => x.donorId === u.id)!; return <li key={r.id}><Link className="flex justify-between rounded-xl border border-line p-3 hover:bg-mist" href={`/r/${r.id}`}><span><b>{r.bloodGroup}</b> · {r.hospital}</span><span className="text-sm text-muted">{a.status === "on_the_way" ? "going" : a.status === "arrived" ? "donated" : a.status === "no_show" ? "missed" : "cancelled"}</span></Link></li>; })}</ul>
           )}
         </div>
       </section>

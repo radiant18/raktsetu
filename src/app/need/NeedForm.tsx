@@ -1,4 +1,5 @@
 "use client";
+import { CheckCircle2, Download, Droplet, ImagePlus, MessageCircle, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useT } from "@/components/Lang";
@@ -67,20 +68,20 @@ export default function NeedForm() {
     return (
       <div className="grid md:grid-cols-2 gap-6 items-start rise">
         <div className="card p-7">
-          <p className="font-semibold">{dup ? "🔁 This request was already posted" : "🟢 Your request is live"}</p>
+          <p className="font-semibold">{dup ? "This request was already posted" : "Your request is live"}</p>
           <h2 className="font-display text-4xl md:text-5xl mt-2">{r.units} unit{r.units > 1 ? "s" : ""} of {r.bloodGroup} for {r.patient}</h2>
           <p className="text-muted mt-1">{r.hospital}{r.area ? `, ${r.area}` : ""}</p>
           <ul className="mt-5 space-y-2 text-sm">
-            {dup ? <li>{t("✅ Someone already posted this. We joined them, so donors don't get it twice.")}</li> : <>
-              <li>{t("✅ Matching donors within 15 km got an alert in their language")}</li>
-              <li>{t("✅ A poster with a QR code is ready (right)")}</li>
-              <li>{t("✅ When you get the blood, upload the bank slip and every copy says DONE")}</li>
+            {dup ? <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("Someone already posted this. We joined them, so donors don't get it twice.")}</li> : <>
+              <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("Matching donors within 15 km got an alert in their language")}</li>
+              <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("A poster with a QR code is ready (right)")}</li>
+              <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("When you get the blood, upload the bank slip and every copy says DONE")}</li>
             </>}
           </ul>
           <div className="mt-6 flex flex-wrap gap-2">
             <Link href={`/r/${r.id}`} className="btn btn-primary">{t("Open my request →")}</Link>
-            <a className="btn btn-dark" target="_blank" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed for ${r.patient} at ${r.hospital}. Live status: ${url}`)}`}>{t("💬 Share on WhatsApp")}</a>
-            <a href={`/r/${r.id}/poster`} download={`raktsetu-${r.bloodGroup}.png`} className="btn btn-ghost">{t("⬇ Poster")}</a>
+            <a className="btn btn-dark" target="_blank" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed for ${r.patient} at ${r.hospital}. Live status: ${url}`)}`}><MessageCircle className="ic" /> {t("Share on WhatsApp")}</a>
+            <a href={`/r/${r.id}/poster`} download={`raktsetu-${r.bloodGroup}.png`} className="btn btn-ghost"><Download className="ic" /> {t("Poster")}</a>
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -103,7 +104,7 @@ export default function NeedForm() {
           </div>
         ) : (
           <div className="text-center p-8">
-            <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-rakt/10 flex items-center justify-center text-3xl">📸</div>
+            <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-rakt/10 flex items-center justify-center text-3xl"><ImagePlus className="h-8 w-8 text-rakt" /></div>
             <p className="font-semibold text-lg">{t("Add a screenshot of the patient details")}</p>
             <p className="text-sm text-muted mt-1">{t("Hospital form, doctor's note, patient file or a WhatsApp message")}</p>
             <p className="text-xs text-muted mt-3">{t("Tap to choose · drag it here · or paste (Ctrl/⌘ + V)")}</p>
@@ -118,9 +119,9 @@ export default function NeedForm() {
             <p className="text-xs uppercase tracking-[.2em] text-muted">{t("How it works")}</p>
             <h3 className="font-display text-3xl mt-2">{t("AI fills the form for you")}</h3>
             <ol className="mt-4 space-y-2 text-sm">
-              <li>{t("1️⃣ Add the screenshot (left)")}</li>
-              <li>{t("2️⃣ AI reads the patient name, hospital and blood group")}</li>
-              <li>{t("3️⃣ Check the details and press")} <b>{t("Post")}</b></li>
+              <li className="flex gap-3 items-start"><span className="h-6 w-6 shrink-0 rounded-full bg-rakt text-white text-xs font-bold flex items-center justify-center">1</span>{t("Add the screenshot (left)")}</li>
+              <li className="flex gap-3 items-start"><span className="h-6 w-6 shrink-0 rounded-full bg-rakt text-white text-xs font-bold flex items-center justify-center">2</span>{t("AI reads the patient name, hospital and blood group")}</li>
+              <li className="flex gap-3 items-start"><span className="h-6 w-6 shrink-0 rounded-full bg-rakt text-white text-xs font-bold flex items-center justify-center">3</span>{t("Check the details and press")} <b>{t("Post")}</b></li>
             </ol>
             <button className="text-sm text-muted underline mt-6" onClick={() => { setF(EMPTY); setFound(new Set()); }}>{t("No screenshot? Type the details instead")}</button>
           </>
@@ -133,7 +134,7 @@ export default function NeedForm() {
         )}
         {f && !reading && (
           <>
-            <h3 className="font-display text-3xl">{found.size ? `${t("✨ AI found")} ${found.size} ${t("details")}` : t("Enter the details")}</h3>
+            <h3 className="font-display text-3xl">{found.size ? <><Sparkles className="ic text-[#4fe3b2]" /> {`${t("AI found")} ${found.size} ${t("details")}`}</> : t("Enter the details")}</h3>
             <p className="text-sm text-muted mt-1">{found.size ? t("Check them. Fix anything that's wrong, then press Post.") : t("Fill in what you know.")}</p>
             {err && <p className="text-sm text-rakt mt-2">{err}</p>}
             <div className="mt-5 grid grid-cols-2 gap-3">
@@ -151,7 +152,7 @@ export default function NeedForm() {
               <Field label="Contact number" k="contact" f={f} setF={setF} found={found} />
             </div>
             <button className="btn btn-primary w-full mt-6 !py-4 text-lg" disabled={posting || !f.patient || !f.bloodGroup || !f.hospital} onClick={post}>
-              {posting ? t("Posting…") : t("🩸 Post request and alert donors")}
+              {posting ? t("Posting…") : <><Droplet className="ic" /> {t("Post request and alert donors")}</>}
             </button>
             {(!f.patient || !f.bloodGroup || !f.hospital) && <p className="text-xs text-muted mt-2 text-center">{t("Patient name, blood group and hospital are needed.")}</p>}
           </>
@@ -163,7 +164,7 @@ export default function NeedForm() {
 }
 
 function Badge() {
-  return <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-[#4fe3b2] bg-[#2fd39f]/10 rounded-full px-2 py-0.5">✨ AI</span>;
+  return <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-[#4fe3b2] bg-[#2fd39f]/10 rounded-full px-2 py-0.5"><Sparkles className="ic" /> AI</span>;
 }
 
 function Field({ label, k, f, setF, found, wide, type }: { label: string; k: keyof Fields; f: Fields; setF: (f: Fields) => void; found: Set<string>; wide?: boolean; type?: string }) {

@@ -1,9 +1,11 @@
+import { AlertTriangle, CheckCircle2, Droplet } from "lucide-react";
 import Link from "next/link";
 import { readDB } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
 import { CAN_RECEIVE_FROM, eligibility, km } from "@/lib/blood";
 import type { BloodRequest } from "@/lib/types";
 import { getT } from "@/lib/lang-server";
+import WhatsAppCard from "@/components/WhatsAppCard";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +21,7 @@ export default async function Donate() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="font-display text-5xl md:text-6xl">{t("🩸 I want to donate")}</h1>
+      <h1 className="font-display text-5xl md:text-6xl"><Droplet className="inline h-[.8em] w-[.8em] text-rakt -mt-2" strokeWidth={2.5} /> {t("I want to donate")}</h1>
       <p className="text-muted mt-2 text-lg">{t("Pick a request, tap Yes, I'll go, and reach the hospital within 2 hours.")}</p>
 
       {!me && (
@@ -37,7 +39,7 @@ export default async function Donate() {
 
       {group && (
         <>
-          <h2 className="font-display text-3xl mt-10">{t("✅ You can help these")} ({matches.length})</h2>
+          <h2 className="font-display text-3xl mt-10"><CheckCircle2 className="inline h-[.8em] w-[.8em] text-pulse -mt-1" /> {t("You can help these")} ({matches.length})</h2>
           <p className="text-muted">{t("Your blood group")} <b>{group}</b> {t("matches. Nearest first.")}</p>
           <List t={t} items={matches} dist={dist} empty={t("No one needs your blood group right now. Thank you for checking!")} highlight />
         </>
@@ -49,7 +51,7 @@ export default async function Donate() {
 
       {closed.length > 0 && (
         <>
-          <h2 className="font-display text-3xl mt-12">{t("Recently done ✅")}</h2>
+          <h2 className="font-display text-3xl mt-12">{t("Recently done")}</h2>
           <div className="mt-4 grid md:grid-cols-3 gap-3">
             {closed.map((r) => (
               <Link key={r.id} href={`/r/${r.id}`} className="rounded-2xl border border-line p-4 flex items-center justify-between bg-[#141414]">
@@ -60,6 +62,7 @@ export default async function Donate() {
           </div>
         </>
       )}
+      <div className="mt-12"><WhatsAppCard /></div>
     </main>
   );
 }
@@ -81,7 +84,7 @@ function List({ t, items, dist, empty, highlight }: { t: (s: string) => string; 
                 <p className="text-sm mt-1">{t("Needs")} <b>{r.units - r.unitsArranged}</b> {t("more unit(s)")}{going ? ` · ${going} ${t("on the way")}` : ""}</p>
               </div>
             </div>
-            {r.scamFlags.length > 0 && <p className="text-xs text-[#f5c451] mt-3">{t("⚠️ Call before you go")}</p>}
+            {r.scamFlags.length > 0 && <p className="text-xs text-[#f5c451] mt-3"><AlertTriangle className="ic" /> {t("Call before you go")}</p>}
             <span className={`btn mt-4 text-sm ${highlight ? "btn-primary" : "btn-ghost"}`}>{highlight ? t("See details and say yes →") : t("See details →")}</span>
           </Link>
         );

@@ -1,4 +1,5 @@
 "use client";
+import { AlertTriangle, Droplet, Image as ImageIcon, Link2, MessageCircle, Paperclip, Phone, Star, Volume2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,10 +20,10 @@ interface Props {
 }
 
 const STATUS: Record<string, string> = {
-  active: "🟢 Still needed",
-  fulfilled: "✅ Done: blood arranged. Stop forwarding.",
+  active: "Still needed",
+  fulfilled: "Done: blood arranged. Stop forwarding.",
   expired: "⌛ Old request, probably not needed",
-  flagged: "🚩 Hidden: reported as fake",
+  flagged: "Hidden: reported as fake",
 };
 
 export default function RequestView({ r, viewer, isOwner, myAcceptance, reported, pins }: Props) {
@@ -58,7 +59,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
       const res = await fetch("/api/alert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestId: r.id, donorId: donor?.id, lang }) });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error);
-      setMsg({ ok: true, text: "🔊 " + j.text });
+      setMsg({ ok: true, text: j.text });
       speak(j.text, j.lang);
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't play alert" });
@@ -76,9 +77,9 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
 
   const share = (
     <div className="flex flex-wrap gap-2">
-      <a className="btn btn-primary text-sm" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed at ${r.hospital}. Live status (says DONE when fulfilled): ${shareUrl}`)}`} target="_blank">💬 Share on WhatsApp</a>
-      <button className="btn btn-ghost text-sm" onClick={() => { navigator.clipboard.writeText(shareUrl); setMsg({ ok: true, text: "Link copied. Share this link instead of the old message. It always shows the latest status." }); }}>🔗 Copy link</button>
-      <a className="btn btn-ghost text-sm" href={`/r/${r.id}/poster`} target="_blank">🖼️ Poster with QR code</a>
+      <a className="btn btn-primary text-sm" href={`https://wa.me/?text=${encodeURIComponent(`${r.bloodGroup} blood needed at ${r.hospital}. Live status (says DONE when fulfilled): ${shareUrl}`)}`} target="_blank"><MessageCircle className="ic" /> Share on WhatsApp</a>
+      <button className="btn btn-ghost text-sm" onClick={() => { navigator.clipboard.writeText(shareUrl); setMsg({ ok: true, text: "Link copied. Share this link instead of the old message. It always shows the latest status." }); }}><Link2 className="ic" /> Copy link</button>
+      <a className="btn btn-ghost text-sm" href={`/r/${r.id}/poster`} target="_blank"><ImageIcon className="ic" /> Poster with QR code</a>
     </div>
   );
 
@@ -86,7 +87,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* 1. What is this request? */}
       <section className="card p-6 md:p-8">
-        <p className="font-semibold">{label}{r.verified && " · 🧾 confirmed by blood bank slip"}</p>
+        <p className="font-semibold">{label}{r.verified && " · confirmed by blood bank slip"}</p>
         <div className="mt-4 flex items-center gap-5">
           <div className={`shrink-0 h-24 w-24 md:h-28 md:w-28 rounded-2xl ${r.status === "active" ? "bg-rakt" : "bg-[#1c1c1c]"} text-white flex flex-col items-center justify-center`}>
             <span className="text-4xl font-bold">{r.bloodGroup ?? "?"}</span>
@@ -95,7 +96,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
           <div className="min-w-0">
             <h1 className="font-display text-3xl md:text-5xl leading-tight">{r.units} unit{r.units > 1 ? "s" : ""} of {r.bloodGroup ?? "blood"} needed</h1>
             <p className="text-muted mt-1 text-lg">for <b className="text-ink">{r.patient ?? "a patient"}</b> at <b className="text-ink">{r.hospital ?? "hospital not given"}</b>{r.area ? `, ${r.area}` : ""}</p>
-            {r.contact && (isOwner || r.status === "active") && <p className="mt-1">📞 <a className="underline" href={`tel:${r.contact.replace(/[^\d+]/g, "")}`}>{r.contact}</a></p>}
+            {r.contact && (isOwner || r.status === "active") && <p className="mt-1"><Phone className="ic" /> <a className="underline" href={`tel:${r.contact.replace(/[^\d+]/g, "")}`}>{r.contact}</a></p>}
           </div>
         </div>
         <div className="mt-6">
@@ -104,7 +105,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
         </div>
         {r.scamFlags.length > 0 && r.status === "active" && (
           <div className="mt-5 rounded-2xl bg-[#f5c451]/10 border border-[#f5c451]/35 p-4 text-sm">
-            <p className="font-semibold">⚠️ Please double-check before you go</p>
+            <p className="font-semibold"><AlertTriangle className="ic text-[#f5c451]" /> Please double-check before you go</p>
             <ul className="mt-1 space-y-0.5">{r.scamFlags.map((s) => <li key={s}>• {s}</li>)}</ul>
           </div>
         )}
@@ -138,7 +139,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
                       <div key={a.donorId + a.acceptedAt} className="flex items-center justify-between gap-3 rounded-2xl border border-line p-3">
                         <div>
                           <p className="font-semibold">{a.donorName} <span className="text-muted font-normal">· {a.group}</span></p>
-                          <p className="text-xs text-muted">⭐ trust {a.trust} ({a.trustLabel})</p>
+                          <p className="text-xs text-muted"><Star className="ic" /> trust {a.trust} ({a.trustLabel})</p>
                         </div>
                         {a.status === "on_the_way" ? (
                           <div className="text-right">
@@ -147,7 +148,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
                             <button className="text-xs text-muted underline" disabled={!!busy} onClick={async () => { if (await call("noshow", { donorId: a.donorId })) { setMsg({ ok: true, text: "Marked as not coming. Their trust score dropped and the place is open for someone else." }); router.refresh(); } }}>They didn&apos;t come</button>
                           </div>
                         ) : (
-                          <span className="chip bg-mist">{a.status === "arrived" ? "✅ arrived" : a.status === "no_show" ? "❌ didn't come" : "left"}</span>
+                          <span className="chip bg-mist">{a.status === "arrived" ? "arrived" : a.status === "no_show" ? "didn't come" : "left"}</span>
                         )}
                       </div>
                     ))}
@@ -177,7 +178,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
             {r.status === "active" && viewer && !myAcceptance?.status && (
               <>
                 <h2 className="font-display text-3xl mt-1">
-                  {!viewer.bloodGroup ? "Add your blood group first" : !viewer.compatible ? `Sorry, ${viewer.bloodGroup} can't be given to ${r.bloodGroup}` : !viewer.ok ? "You donated recently" : "✅ You can donate!"}
+                  {!viewer.bloodGroup ? "Add your blood group first" : !viewer.compatible ? `Sorry, ${viewer.bloodGroup} can't be given to ${r.bloodGroup}` : !viewer.ok ? "You donated recently" : "You can donate!"}
                 </h2>
                 <p className="text-muted mt-1">
                   {!viewer.bloodGroup ? <Link className="underline" href="/me">Add it on your account page.</Link>
@@ -187,7 +188,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
                 </p>
                 {viewer.compatible && viewer.ok && (
                   <button className="btn btn-primary mt-4 w-full !py-4 text-lg" disabled={!!busy || viewer.blocked} onClick={async () => { const j = await call("accept"); if (j) { setMsg({ ok: true, text: `Thank you! You are ${j.distanceKm.toFixed(1)} km away. At the hospital, ask the family for your 4-digit code.` }); router.refresh(); } }}>
-                    🩸 Yes, I&apos;ll go
+                    <Droplet className="ic" /> Yes, I&apos;ll go
                   </button>
                 )}
               </>
@@ -201,7 +202,7 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
                   <Step n="2" title="Ask the family for your 4-digit code and type it here">
                     <div className="flex gap-2">
                       <input className="input font-mono text-2xl tracking-[.4em] text-center" maxLength={4} inputMode="numeric" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} placeholder="••••" />
-                      <button className="btn btn-primary" disabled={code.length !== 4 || !!busy} onClick={async () => { const j = await call("arrive", { code }); if (j) { setMsg({ ok: true, text: "You're confirmed at the hospital. Thank you, your trust score went up. 🩸" }); router.refresh(); } }}>Confirm</button>
+                      <button className="btn btn-primary" disabled={code.length !== 4 || !!busy} onClick={async () => { const j = await call("arrive", { code }); if (j) { setMsg({ ok: true, text: "You're confirmed at the hospital. Thank you, your trust score went up." }); router.refresh(); } }}>Confirm</button>
                     </div>
                   </Step>
                 </ol>
@@ -209,13 +210,13 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
               </>
             )}
             {viewer && myAcceptance && myAcceptance.status !== "on_the_way" && (
-              <h2 className="font-display text-3xl mt-1">{myAcceptance.status === "arrived" ? "✅ You donated. Thank you!" : myAcceptance.status === "no_show" ? "You didn't make it this time." : "You cancelled this one."}</h2>
+              <h2 className="font-display text-3xl mt-1">{myAcceptance.status === "arrived" ? "You donated. Thank you!" : myAcceptance.status === "no_show" ? "You didn't make it this time." : "You cancelled this one."}</h2>
             )}
 
             {r.status === "active" && <div className="mt-6 pt-5 border-t border-line"><p className="text-sm font-medium mb-2">Know someone who can help? Share it:</p>{share}</div>}
             {viewer && r.status === "active" && (
               <button className="text-xs text-muted underline mt-4 block" disabled={reported || !!busy} onClick={async () => { const j = await call("report"); if (j) { setMsg({ ok: true, text: j.hidden ? "Thanks. Enough people reported this, so it's now hidden." : `Reported (${j.reports} of 3). We hide a request after 3 reports.` }); router.refresh(); } }}>
-                {reported ? "You reported this as fake" : "🚩 This looks fake"}
+                {reported ? "You reported this as fake" : "This looks fake"}
               </button>
             )}
           </section>
@@ -225,12 +226,12 @@ export default function RequestView({ r, viewer, isOwner, myAcceptance, reported
         <section className="flex flex-col gap-4">
           <div className="card p-4">
             <p className="font-semibold px-2">Donors near the hospital</p>
-            <p className="text-sm text-muted px-2 pb-3">🔴 hospital · 🟢 can donate today · ⚪ donated recently. {canGive} can give today.</p>
+            <p className="text-sm text-muted px-2 pb-3"><span className="inline-block h-2.5 w-2.5 rounded-full bg-rakt align-middle" /> hospital · <span className="inline-block h-2.5 w-2.5 rounded-full bg-pulse align-middle" /> can donate today · <span className="inline-block h-2.5 w-2.5 rounded-full bg-white/60 align-middle" /> donated recently. {canGive} can give today.</p>
             <DonorMap center={[r.lat, r.lng]} hospital={r.hospital ?? "Hospital"} pins={pins} />
           </div>
           {r.status === "active" && (
             <div className="card p-5">
-              <p className="font-semibold">🔊 Hear the alert donors get</p>
+              <p className="font-semibold"><Volume2 className="ic" /> Hear the alert donors get</p>
               <p className="text-sm text-muted">Each donor hears it in their own language.</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {(["kn", "hi", "en"] as const).map((l) => (
@@ -264,7 +265,7 @@ function CloseBox({ busy, onClose }: { busy: boolean; onClose: (fd: FormData) =>
     <div className="rounded-2xl bg-mist p-4">
       <p className="text-sm text-muted">Take a photo of the slip the blood bank gave you. We read it and mark this request as done everywhere.</p>
       <label className="btn btn-ghost text-sm mt-3 cursor-pointer">
-        📎 {file ? file.name : "Choose slip photo"}
+        <Paperclip className="ic" /> {file ? file.name : "Choose slip photo"}
         <input type="file" accept="image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
       </label>
       <div className="mt-3 flex flex-wrap items-center gap-3">

@@ -1,8 +1,8 @@
+import { Droplet, Hospital, KeyRound, Receipt, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
 import { readDB } from "@/lib/db";
 import { CountUp, DropScene, Reveal, Tilt } from "@/components/Motion";
 import BloodMatch from "@/components/BloodMatch";
-import WhatsAppCard from "@/components/WhatsAppCard";
 import { getT } from "@/lib/lang-server";
 
 export const dynamic = "force-dynamic";
@@ -31,8 +31,8 @@ export default async function Home() {
               <p className="mt-6 max-w-xl text-lg text-muted">{t("Take a screenshot of the patient's details. Our AI reads the name, hospital and blood group, posts the request, and alerts only donors who can actually give, near the hospital.")}</p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/need" className="btn btn-primary !px-6 !py-4 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgba(224,17,43,.8)]">🏥 {t("I need blood")}</Link>
-              <Link href="/live" className="btn btn-ghost !px-6 !py-4 hover:-translate-y-0.5">🩸 {t("I want to donate")}</Link>
+              <Link href="/need" className="btn btn-primary !px-6 !py-4 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgba(224,17,43,.8)]"><Hospital className="ic" /> {t("I need blood")}</Link>
+              <Link href="/live" className="btn btn-ghost !px-6 !py-4 hover:-translate-y-0.5"><Droplet className="ic" /> {t("I want to donate")}</Link>
             </div>
           </div>
 
@@ -68,7 +68,6 @@ export default async function Home() {
       {/* Interactive blood match */}
       <section className="mx-auto max-w-6xl px-4 mt-14">
         <Reveal><BloodMatch /></Reveal>
-        <Reveal><div className="mt-6"><WhatsAppCard /></div></Reveal>
       </section>
 
       {/* How it works */}
@@ -100,13 +99,13 @@ export default async function Home() {
         </Reveal>
         <div className="grid grid-cols-2 gap-3">
           {[
-            ["🔐", "Everyone signs in with a phone code"],
-            ["🔢", "Donor confirms arrival with a code from the family"],
-            ["⭐", "Donors who don't show up lose trust"],
-            ["🧾", "Requests close only with a blood bank slip"],
-          ].map(([i, tx], k) => (
-            <Reveal key={tx} delay={k * 90}>
-              <Tilt className="card p-5 flex items-start gap-3 h-full" max={14}><span className="text-2xl pop">{i}</span><span className="font-medium text-sm">{t(tx)}</span></Tilt>
+            [ShieldCheck, "Everyone signs in with a phone code"],
+            [KeyRound, "Donor confirms arrival with a code from the family"],
+            [Star, "Donors who don't show up lose trust"],
+            [Receipt, "Requests close only with a blood bank slip"],
+          ].map(([Ic, tx], k) => (
+            <Reveal key={tx as string} delay={k * 90}>
+              <Tilt className="card p-5 flex items-center gap-3 h-full" max={14}><span className="pop h-10 w-10 shrink-0 rounded-xl bg-rakt/12 text-rakt flex items-center justify-center"><Ic className="h-5 w-5" strokeWidth={2} /></span><span className="font-medium text-sm">{t(tx as string)}</span></Tilt>
             </Reveal>
           ))}
         </div>

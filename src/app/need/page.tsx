@@ -1,5 +1,7 @@
+import { Mic } from "lucide-react";
 import Link from "next/link";
 import NeedForm from "./NeedForm";
+import WhatsAppCard from "@/components/WhatsAppCard";
 import { currentUser } from "@/lib/auth";
 import { getT } from "@/lib/lang-server";
 
@@ -26,10 +28,11 @@ export default async function Need() {
           <div className="mt-8"><NeedForm /></div>
           <div className="mt-6 border-t hair pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <p className="text-muted"><b className="text-ink">{t("No screenshot?")}</b> {t("Say it out loud in Kannada, Hindi or English.")}</p>
-            <Link href="/voice" className="btn btn-ghost shrink-0">{t("🎙️ Speak your request")}</Link>
+            <Link href="/voice" className="btn btn-ghost shrink-0"><Mic className="ic" /> {t("Speak your request")}</Link>
           </div>
         </>
       )}
+      <div className="mt-12"><WhatsAppCard /></div>
     </main>
   );
 }
