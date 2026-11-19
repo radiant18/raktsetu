@@ -73,7 +73,7 @@ export default async function Home() {
           {[
             ["01", "Screenshot in", "Hospital form, doctor's note or WhatsApp message. Any language."],
             ["02", "AI reads it", "Patient, hospital, blood group, units and contact, filled in for you."],
-            ["03", "Right donors only", "Matching blood group, within 15 km, alerted in Kannada, Hindi or English."],
+            ["03", "Right donors only", "Matching blood group, within 50 km, alerted in Kannada, Hindi or English."],
             ["04", "Closed with proof", "Upload the blood bank slip. Every shared link now says DONE."],
           ].map(([n, ti, d], i) => (
             <Reveal key={n} delay={i * 110}>

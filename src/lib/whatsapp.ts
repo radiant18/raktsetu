@@ -92,7 +92,7 @@ export async function welcomeMatches(userId: string): Promise<void> {
       const reqs = db.requests
         .filter((r) => r.status === "active" && r.bloodGroup && CAN_RECEIVE_FROM[r.bloodGroup].includes(g) && r.createdBy !== u.id)
         .map((r) => ({ r, d: km(r.lat, r.lng, u.lat, u.lng) }))
-        .filter((x) => x.d <= 25)
+        .filter((x) => x.d <= 50)
         .sort((a, b) => a.d - b.d)
         .slice(0, 3);
       if (reqs[0]) u.lastAlert = reqs[0].r.id;
@@ -101,7 +101,7 @@ export async function welcomeMatches(userId: string): Promise<void> {
     const donors = db.users
       .filter((x) => x.role === "donor" && x.bloodGroup && x.id !== u.id && !x.blocked)
       .map((x) => ({ name: short(x.name), group: x.bloodGroup as string, d: km(u.lat, u.lng, x.lat, x.lng), ok: eligibility(x).ok }))
-      .filter((x) => x.d <= 15)
+      .filter((x) => x.d <= 50)
       .sort((a, b) => Number(b.ok) - Number(a.ok) || a.d - b.d);
     return { u: { ...u }, reqs: [] as { r: BloodRequest; d: number }[], donors };
   });
@@ -125,7 +125,7 @@ export async function welcomeMatches(userId: string): Promise<void> {
     if (n) {
       const groups: Record<string, number> = {};
       plan.donors.forEach((x) => (groups[x.group] = (groups[x.group] || 0) + 1));
-      msg += `*${n} donor${n > 1 ? "s" : ""} within 15 km of ${u.area}* (${ready} ready to give today):\n`;
+      msg += `*${n} donor${n > 1 ? "s" : ""} within 50 km of ${u.area}* (${ready} ready to give today):\n`;
       plan.donors.slice(0, 5).forEach((x) => (msg += `\n• ${x.name} · *${x.group}* · ${kmTxt(x.d)}${x.ok ? "" : " (resting)"}`));
       msg += `\n\nBy group: ${Object.entries(groups).map(([g, c]) => `${g} ${c}`).join(" · ")}`;
     } else {
@@ -149,7 +149,7 @@ export async function tellRequester(requestId: string, alerted: number): Promise
   let msg = `🩸 *Your request is live:* ${r.bloodGroup} · ${r.units} unit(s) · ${r.hospital}\n`;
   msg += list.length
     ? `\n*Matching donors nearby:*\n${list.map((x) => `• ${x.name} · *${x.group}* · ${kmTxt(x.d)}${x.ok ? "" : " (resting)"}`).join("\n")}\n\n${alerted ? `We've alerted ${alerted} of them on WhatsApp.` : "We're alerting them now."}`
-    : `\nNo matching donors within 15 km yet. We'll keep looking and message you.`;
+    : `\nNo matching donors within 50 km yet. We'll keep looking and message you.`;
   msg += `\nWhen someone says they're coming, you'll get their name and a 4-digit code to confirm at the hospital.\nTrack it: ${SITE}/r/${r.id}`;
   await sendWhatsApp(info.u.contact, msg);
 }

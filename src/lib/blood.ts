@@ -67,7 +67,7 @@ export function matchDonors(req: BloodRequest, users: User[], limit = 12): Match
       const e = eligibility(u);
       return { user: u, distanceKm: km(req.lat, req.lng, u.lat, u.lng), eligible: e.ok, daysLeft: e.daysLeft };
     })
-    .filter((m) => m.distanceKm <= 15)
+    .filter((m) => m.distanceKm <= 50)
     // eligible first, then a blend of closeness and trust
     .sort((a, b) => Number(b.eligible) - Number(a.eligible) || (a.distanceKm - a.user.trust / 25) - (b.distanceKm - b.user.trust / 25))
     .slice(0, limit);

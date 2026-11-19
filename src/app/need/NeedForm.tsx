@@ -79,7 +79,7 @@ export default function NeedForm() {
           <p className="text-muted mt-1">{r.hospital}{r.area ? `, ${r.area}` : ""}</p>
           <ul className="mt-5 space-y-2 text-sm">
             {dup ? <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("Someone already posted this. We joined them, so donors don't get it twice.")}</li> : <>
-              <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("Matching donors within 15 km got an alert in their language")}</li>
+              <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("Matching donors within 50 km got an alert in their language")}</li>
               <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("A poster with a QR code is ready (right)")}</li>
               <li className="flex gap-2"><CheckCircle2 className="ic text-pulse mt-0.5 shrink-0" />{t("When you get the blood, upload the bank slip and every copy says DONE")}</li>
             </>}

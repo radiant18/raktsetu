@@ -124,7 +124,7 @@ async function donateList(me: User): Promise<string> {
     const near = d.requests
       .filter((r) => r.status === "active" && r.createdBy !== me.id && r.bloodGroup && CAN_RECEIVE_FROM[r.bloodGroup].includes(me.bloodGroup!))
       .map((r) => ({ r, d: km(r.lat, r.lng, me.lat, me.lng) }))
-      .filter((x) => x.d <= 15).sort((a, b) => a.d - b.d).slice(0, 3);
+      .filter((x) => x.d <= 50).sort((a, b) => a.d - b.d).slice(0, 3);
     const u = d.users.find((x) => x.id === me.id);
     if (u && near[0]) u.lastAlert = near[0].r.id;
     return near;

@@ -58,7 +58,7 @@ const D: Record<string, [string, string]> = {
   "AI reads it": ["AI इसे पढ़ता है", "AI ಅದನ್ನು ಓದುತ್ತದೆ"],
   "Patient, hospital, blood group, units and contact, filled in for you.": ["मरीज़, अस्पताल, ब्लड ग्रुप, यूनिट और संपर्क, सब अपने आप भर जाता है।", "ರೋಗಿ, ಆಸ್ಪತ್ರೆ, ರಕ್ತದ ಗುಂಪು, ಯೂನಿಟ್ ಮತ್ತು ಸಂಪರ್ಕ ನಿಮಗಾಗಿ ತುಂಬಲಾಗುತ್ತದೆ."],
   "Right donors only": ["सिर्फ़ सही डोनर", "ಸರಿಯಾದ ದಾನಿಗಳು ಮಾತ್ರ"],
-  "Matching blood group, within 15 km, alerted in Kannada, Hindi or English.": ["मेल खाता ब्लड ग्रुप, 15 किमी के अंदर, कन्नड़, हिंदी या अंग्रेज़ी में अलर्ट।", "ಹೊಂದುವ ರಕ್ತದ ಗುಂಪು, 15 ಕಿ.ಮೀ ಒಳಗೆ, ಕನ್ನಡ, ಹಿಂದಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಸೂಚನೆ."],
+  "Matching blood group, within 50 km, alerted in Kannada, Hindi or English.": ["मेल खाता ब्लड ग्रुप, 50 किमी के अंदर, कन्नड़, हिंदी या अंग्रेज़ी में अलर्ट।", "ಹೊಂದುವ ರಕ್ತದ ಗುಂಪು, 50 ಕಿ.ಮೀ ಒಳಗೆ, ಕನ್ನಡ, ಹಿಂದಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಸೂಚನೆ."],
   "Closed with proof": ["सबूत के साथ बंद", "ಪುರಾವೆಯೊಂದಿಗೆ ಮುಕ್ತಾಯ"],
   "Upload the blood bank slip. Every shared link now says DONE.": ["ब्लड बैंक की पर्ची अपलोड करें। हर शेयर किया गया लिंक अब DONE दिखाता है।", "ರಕ್ತ ನಿಧಿಯ ಚೀಟಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಹಂಚಿಕೊಂಡ ಪ್ರತಿಯೊಂದು ಲಿಂಕ್ ಈಗ DONE ಎಂದು ತೋರಿಸುತ್ತದೆ."],
   "Why you can trust it": ["आप भरोसा क्यों कर सकते हैं", "ನೀವು ಏಕೆ ನಂಬಬಹುದು"],
@@ -192,7 +192,7 @@ const D: Record<string, [string, string]> = {
   "Poster": ["पोस्टर", "ಪೋಸ್ಟರ್"],
 
   "Someone already posted this. We joined them, so donors don't get it twice.": ["किसी ने यह पहले ही पोस्ट किया है। हमने इसे जोड़ दिया, ताकि डोनर्स को दो बार न मिले।", "ಯಾರೋ ಇದನ್ನು ಈಗಾಗಲೇ ಪೋಸ್ಟ್ ಮಾಡಿದ್ದಾರೆ. ದಾನಿಗಳಿಗೆ ಎರಡು ಬಾರಿ ಹೋಗದಂತೆ ಜೋಡಿಸಿದ್ದೇವೆ."],
-  "Matching donors within 15 km got an alert in their language": ["15 किमी के अंदर मेल खाते डोनर्स को उनकी भाषा में अलर्ट गया", "15 ಕಿ.ಮೀ ಒಳಗಿನ ಹೊಂದುವ ದಾನಿಗಳಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಸೂಚನೆ ಹೋಗಿದೆ"],
+  "Matching donors within 50 km got an alert in their language": ["50 किमी के अंदर मेल खाते डोनर्स को उनकी भाषा में अलर्ट गया", "50 ಕಿ.ಮೀ ಒಳಗಿನ ಹೊಂದುವ ದಾನಿಗಳಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಸೂಚನೆ ಹೋಗಿದೆ"],
   "A poster with a QR code is ready (right)": ["QR कोड वाला पोस्टर तैयार है", "QR ಕೋಡ್ ಇರುವ ಪೋಸ್ಟರ್ ಸಿದ್ಧವಿದೆ"],
   "When you get the blood, upload the bank slip and every copy says DONE": ["खून मिलने पर बैंक की पर्ची अपलोड करें, हर कॉपी DONE दिखाएगी", "ರಕ್ತ ಸಿಕ್ಕಾಗ ಬ್ಯಾಂಕ್ ಚೀಟಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಪ್ರತಿ ಪ್ರತಿಯೂ DONE ತೋರಿಸುತ್ತದೆ"],
 
