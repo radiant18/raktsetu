@@ -137,7 +137,7 @@ export async function readDonationProof(base64: string, mediaType: string): Prom
 
 // Short spoken alert in the donor's language.
 export async function alertText(lang: "en" | "hi" | "kn", r: { bloodGroup: string | null; units: number; hospital: string | null; area: string | null; distanceKm: number }): Promise<string> {
-  const base = `Urgent: ${r.units} unit${r.units > 1 ? "s" : ""} of ${r.bloodGroup ?? "blood"} needed at ${r.hospital ?? "a hospital"}${r.area ? ", " + r.area : ""}, ${r.distanceKm.toFixed(1)} kilometres from you. Open RaktSetu to accept.`;
+  const base = `Urgent: ${r.units} unit${r.units > 1 ? "s" : ""} of ${r.bloodGroup ?? "blood"} needed at ${r.hospital ?? "a hospital"}${r.area ? ", " + r.area : ""}${r.distanceKm > 0.05 ? ", " + r.distanceKm.toFixed(1) + " kilometres from you" : ""}. Open RaktSetu to accept.`;
   if (lang === "en") return base;
   const res = await ai().messages.create({
     model: MODEL,
