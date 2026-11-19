@@ -34,7 +34,7 @@ export default async function Me() {
         <div className="card p-6 bg-rakt text-white border-0">
           <p className="text-xs uppercase tracking-widest opacity-80">My blood group</p>
           <p className="text-6xl font-bold mt-2">{u.bloodGroup ?? "—"}</p>
-          <p className="mt-2 text-sm opacity-90">{u.passportVerified ? "✓ Confirmed with donation certificate" : u.role === "donor" ? "Upload a certificate below to confirm" : ""}</p>
+          <p className="mt-2 text-sm opacity-90">{u.passportVerified ? "✓ Confirmed with donation certificate" : u.firstTimer ? "First-time donor, welcome!" : u.role === "donor" ? "Upload a certificate below, or tick first time" : ""}</p>
         </div>
         <div className="card p-6">
           <p className="text-xs uppercase tracking-widest text-muted">Trust score (out of 100)</p>
@@ -49,7 +49,7 @@ export default async function Me() {
         </div>
       </div>
 
-      {u.role === "donor" && <Passport />}
+      {u.role === "donor" && <Passport firstTimer={Boolean(u.firstTimer)} />}
 
       <section className="mt-8 grid md:grid-cols-2 gap-4">
         <div className="card p-6">

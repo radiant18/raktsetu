@@ -60,6 +60,7 @@ export interface User {
   blocked: boolean;
   createdAt: string;
   demo?: boolean;
+  firstTimer?: boolean; // never donated before, so no certificate to upload
   lastAlert?: string; // request id of the last WhatsApp alert (so a donor can reply YES)
 }
 

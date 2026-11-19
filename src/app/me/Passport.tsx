@@ -1,13 +1,27 @@
 "use client";
-import { Paperclip, Receipt } from "lucide-react";
+import { Paperclip, Receipt, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Passport() {
+export default function Passport({ firstTimer = false }: { firstTimer?: boolean }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null);
+  const setFirst = async (v: boolean) => {
+    setBusy(true);
+    await fetch("/api/passport", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ firstTime: v }) });
+    setBusy(false); router.refresh();
+  };
+  if (firstTimer) return (
+    <section className="mt-6 card p-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 className="font-display text-2xl"><Sparkles className="inline h-6 w-6 text-rakt -mt-1" /> First-time donor</h2>
+        <p className="text-sm text-muted mt-1">No certificate needed. You can donate today. After your first donation, upload the certificate here.</p>
+      </div>
+      <button className="text-sm underline text-muted" disabled={busy} onClick={() => setFirst(false)}>I have donated before</button>
+    </section>
+  );
   return (
     <section className="mt-6 card p-6 grid md:grid-cols-[1fr_auto] gap-4 items-center">
       <div>
@@ -26,6 +40,10 @@ export default function Passport() {
           router.refresh();
         }}>{busy ? "Reading…" : "Upload and check"}</button>
       </div>
+      <label className="md:col-span-2 flex items-center gap-3 rounded-2xl border-2 border-rakt/50 bg-rakt/10 px-4 py-3 cursor-pointer hover:border-rakt transition">
+        <input type="checkbox" className="h-5 w-5 accent-[#e8132f]" disabled={busy} onChange={(e) => e.target.checked && setFirst(true)} />
+        <span><b>This is my first time donating</b> <span className="text-muted text-sm">· I don&apos;t have a certificate yet, skip this</span></span>
+      </label>
     </section>
   );
 }

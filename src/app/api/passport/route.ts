@@ -10,6 +10,16 @@ export const maxDuration = 60;
 export async function POST(req: Request) {
   const uidv = await currentUserId();
   if (!uidv) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
+  if ((req.headers.get("content-type") || "").includes("application/json")) {
+    const b = (await req.json().catch(() => ({}))) as { firstTime?: boolean };
+    const u = await mutate((db) => {
+      const x = db.users.find((y) => y.id === uidv);
+      if (x) { x.firstTimer = Boolean(b.firstTime); if (x.firstTimer) x.lastDonation = null; }
+      return x;
+    });
+    if (!u) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+    return NextResponse.json({ ok: true, firstTimer: u.firstTimer });
+  }
   const form = await req.formData();
   const file = form.get("image");
   if (!(file instanceof File)) return NextResponse.json({ error: "Upload a screenshot." }, { status: 400 });
